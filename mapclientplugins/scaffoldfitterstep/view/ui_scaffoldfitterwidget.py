@@ -405,7 +405,7 @@ class Ui_SmoothfitWidget(object):
         self.verticalLayout_2.addWidget(self.scrollArea)
         self.dockWidget.setWidget(self.dockWidgetContents)
         self.horizontalLayout.addWidget(self.dockWidget)
-        self.sceneviewerWidget = AlignmentSceneviewerWidget(SmoothfitWidget)
+        self.sceneviewerWidget = BaseSceneviewerWidget(SmoothfitWidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(1)
         sizePolicy.setVerticalStretch(0)
@@ -486,4 +486,4 @@ class Ui_SmoothfitWidget(object):
         self.doneButton.setToolTip(QtGui.QApplication.translate("SmoothfitWidget", "Finish this step", None, QtGui.QApplication.UnicodeUTF8))
         self.doneButton.setText(QtGui.QApplication.translate("SmoothfitWidget", "Done", None, QtGui.QApplication.UnicodeUTF8))
 
-from alignmentsceneviewerwidget import AlignmentSceneviewerWidget
+from opencmiss.zincwidgets.basesceneviewerwidget import BaseSceneviewerWidget
