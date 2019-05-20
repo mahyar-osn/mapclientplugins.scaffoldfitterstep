@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>SmoothfitWidget</class>
- <widget class="QWidget" name="SmoothfitWidget">
+ <class>ScaffoldfitterWidget</class>
+ <widget class="QWidget" name="ScaffoldfitterWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -146,15 +146,296 @@ QToolBox {
               <number>2</number>
              </property>
              <property name="tabSpacing">
-              <number>2</number>
+              <number>6</number>
              </property>
+             <widget class="QWidget" name="Scaffoldpage">
+              <attribute name="label">
+               <string>Scaffold Parametrs</string>
+              </attribute>
+              <widget class="QGroupBox" name="displayOptions_groupBox">
+               <property name="geometry">
+                <rect>
+                 <x>0</x>
+                 <y>50</y>
+                 <width>331</width>
+                 <height>173</height>
+                </rect>
+               </property>
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="title">
+                <string>Display options:</string>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout_8">
+                <item>
+                 <widget class="QCheckBox" name="displayAxes_checkBox">
+                  <property name="text">
+                   <string>Axes</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QFrame" name="displayLines_frame">
+                  <property name="frameShape">
+                   <enum>QFrame::StyledPanel</enum>
+                  </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Raised</enum>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_5">
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QCheckBox" name="displayLines_checkBox">
+                     <property name="text">
+                      <string>Lines</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QCheckBox" name="displayLinesExterior_checkBox">
+                     <property name="text">
+                      <string>Exterior</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLabel" name="displayLinesDummy1_label">
+                     <property name="text">
+                      <string/>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLabel" name="displayLinesDummy2_label">
+                     <property name="text">
+                      <string/>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QFrame" name="displaySurfaces_frame">
+                  <property name="frameShape">
+                   <enum>QFrame::StyledPanel</enum>
+                  </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Raised</enum>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_3">
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QCheckBox" name="displaySurfaces_checkBox">
+                     <property name="text">
+                      <string>Surfaces</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QCheckBox" name="displaySurfacesExterior_checkBox">
+                     <property name="text">
+                      <string>Exterior</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QCheckBox" name="displaySurfacesTranslucent_checkBox">
+                     <property name="text">
+                      <string>Transluc.</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QCheckBox" name="displaySurfacesWireframe_checkBox">
+                     <property name="text">
+                      <string>Wireframe</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QFrame" name="displayNodes_frame">
+                  <property name="frameShape">
+                   <enum>QFrame::StyledPanel</enum>
+                  </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Raised</enum>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_6">
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QCheckBox" name="displayNodeNumbers_checkBox">
+                     <property name="text">
+                      <string>Node numbers</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QCheckBox" name="displayNodeDerivatives_checkBox">
+                     <property name="text">
+                      <string>Node derivatives</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QFrame" name="displayElements_frame">
+                  <property name="frameShape">
+                   <enum>QFrame::StyledPanel</enum>
+                  </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Raised</enum>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_4">
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QCheckBox" name="displayElementNumbers_checkBox">
+                     <property name="text">
+                      <string>Element numbers</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+              <widget class="QFrame" name="modifyOptions_frame">
+               <property name="geometry">
+                <rect>
+                 <x>0</x>
+                 <y>220</y>
+                 <width>331</width>
+                 <height>104</height>
+                </rect>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::StyledPanel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout_9">
+                <item>
+                 <widget class="QLabel" name="deleteElementRanges_label">
+                  <property name="text">
+                   <string>Delete element ID ranges (e.g. 1,2-5,13):</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLineEdit" name="deleteElementsRanges_lineEdit"/>
+                </item>
+                <item>
+                 <widget class="QLabel" name="scale_label">
+                  <property name="text">
+                   <string>Scale x*y*z:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLineEdit" name="scale_lineEdit"/>
+                </item>
+               </layout>
+              </widget>
+              <widget class="QFrame" name="meshType_frame">
+               <property name="geometry">
+                <rect>
+                 <x>0</x>
+                 <y>10</y>
+                 <width>341</width>
+                 <height>28</height>
+                </rect>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::StyledPanel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
+               </property>
+               <layout class="QFormLayout" name="formLayout_3">
+                <property name="fieldGrowthPolicy">
+                 <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+                </property>
+                <property name="topMargin">
+                 <number>3</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>3</number>
+                </property>
+                <item row="0" column="0">
+                 <widget class="QLabel" name="meshType_label">
+                  <property name="text">
+                   <string>Mesh type:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QComboBox" name="meshType_comboBox"/>
+                </item>
+               </layout>
+              </widget>
+             </widget>
              <widget class="QWidget" name="alignPage">
               <property name="geometry">
                <rect>
                 <x>0</x>
                 <y>0</y>
                 <width>340</width>
-                <height>502</height>
+                <height>490</height>
                </rect>
               </property>
               <property name="sizePolicy">
@@ -379,7 +660,7 @@ QToolBox {
                 <x>0</x>
                 <y>0</y>
                 <width>340</width>
-                <height>502</height>
+                <height>490</height>
                </rect>
               </property>
               <property name="sizePolicy">
@@ -702,250 +983,6 @@ QToolBox {
                 </spacer>
                </item>
               </layout>
-             </widget>
-             <widget class="QWidget" name="page">
-              <attribute name="label">
-               <string>Scaffold Parametrs</string>
-              </attribute>
-              <widget class="QGroupBox" name="displayOptions_groupBox">
-               <property name="geometry">
-                <rect>
-                 <x>0</x>
-                 <y>10</y>
-                 <width>331</width>
-                 <height>173</height>
-                </rect>
-               </property>
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="title">
-                <string>Display options:</string>
-               </property>
-               <layout class="QVBoxLayout" name="verticalLayout_8">
-                <item>
-                 <widget class="QCheckBox" name="displayAxes_checkBox">
-                  <property name="text">
-                   <string>Axes</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QFrame" name="displayLines_frame">
-                  <property name="frameShape">
-                   <enum>QFrame::StyledPanel</enum>
-                  </property>
-                  <property name="frameShadow">
-                   <enum>QFrame::Raised</enum>
-                  </property>
-                  <layout class="QHBoxLayout" name="horizontalLayout_5">
-                   <property name="leftMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="topMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="rightMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="bottomMargin">
-                    <number>0</number>
-                   </property>
-                   <item>
-                    <widget class="QCheckBox" name="displayLines_checkBox">
-                     <property name="text">
-                      <string>Lines</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QCheckBox" name="displayLinesExterior_checkBox">
-                     <property name="text">
-                      <string>Exterior</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QLabel" name="displayLinesDummy1_label">
-                     <property name="text">
-                      <string/>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QLabel" name="displayLinesDummy2_label">
-                     <property name="text">
-                      <string/>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QFrame" name="displaySurfaces_frame">
-                  <property name="frameShape">
-                   <enum>QFrame::StyledPanel</enum>
-                  </property>
-                  <property name="frameShadow">
-                   <enum>QFrame::Raised</enum>
-                  </property>
-                  <layout class="QHBoxLayout" name="horizontalLayout_3">
-                   <property name="leftMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="topMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="rightMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="bottomMargin">
-                    <number>0</number>
-                   </property>
-                   <item>
-                    <widget class="QCheckBox" name="displaySurfaces_checkBox">
-                     <property name="text">
-                      <string>Surfaces</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QCheckBox" name="displaySurfacesExterior_checkBox">
-                     <property name="text">
-                      <string>Exterior</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QCheckBox" name="displaySurfacesTranslucent_checkBox">
-                     <property name="text">
-                      <string>Transluc.</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QCheckBox" name="displaySurfacesWireframe_checkBox">
-                     <property name="text">
-                      <string>Wireframe</string>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QFrame" name="displayNodes_frame">
-                  <property name="frameShape">
-                   <enum>QFrame::StyledPanel</enum>
-                  </property>
-                  <property name="frameShadow">
-                   <enum>QFrame::Raised</enum>
-                  </property>
-                  <layout class="QHBoxLayout" name="horizontalLayout_6">
-                   <property name="leftMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="topMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="rightMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="bottomMargin">
-                    <number>0</number>
-                   </property>
-                   <item>
-                    <widget class="QCheckBox" name="displayNodeNumbers_checkBox">
-                     <property name="text">
-                      <string>Node numbers</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QCheckBox" name="displayNodeDerivatives_checkBox">
-                     <property name="text">
-                      <string>Node derivatives</string>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QFrame" name="displayElements_frame">
-                  <property name="frameShape">
-                   <enum>QFrame::StyledPanel</enum>
-                  </property>
-                  <property name="frameShadow">
-                   <enum>QFrame::Raised</enum>
-                  </property>
-                  <layout class="QHBoxLayout" name="horizontalLayout_4">
-                   <property name="leftMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="topMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="rightMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="bottomMargin">
-                    <number>0</number>
-                   </property>
-                   <item>
-                    <widget class="QCheckBox" name="displayElementNumbers_checkBox">
-                     <property name="text">
-                      <string>Element numbers</string>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-              <widget class="QFrame" name="modifyOptions_frame">
-               <property name="geometry">
-                <rect>
-                 <x>0</x>
-                 <y>190</y>
-                 <width>331</width>
-                 <height>104</height>
-                </rect>
-               </property>
-               <property name="frameShape">
-                <enum>QFrame::StyledPanel</enum>
-               </property>
-               <property name="frameShadow">
-                <enum>QFrame::Raised</enum>
-               </property>
-               <layout class="QVBoxLayout" name="verticalLayout_9">
-                <item>
-                 <widget class="QLabel" name="deleteElementRanges_label">
-                  <property name="text">
-                   <string>Delete element ID ranges (e.g. 1,2-5,13):</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLineEdit" name="deleteElementsRanges_lineEdit"/>
-                </item>
-                <item>
-                 <widget class="QLabel" name="scale_label">
-                  <property name="text">
-                   <string>Scale x*y*z:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLineEdit" name="scale_lineEdit"/>
-                </item>
-               </layout>
-              </widget>
              </widget>
             </widget>
            </item>
