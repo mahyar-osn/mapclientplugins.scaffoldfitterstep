@@ -30,12 +30,11 @@ class ScaffoldFitterStep(WorkflowStepMountPoint):
                       'http://physiomeproject.org/workflow/1.0/rdf-schema#provides',
                       'http://physiomeproject.org/workflow/1.0/rdf-schema#file_location'))
         # Port data:
-        self._portData0 = None # file_location
-        self._portData1 = None # file_location
+        self._pointCloudData = None # file_location: point cloud data to fit the scaffold to
+        self._fittedScaffold = None # file_location: final fitted scaffold
         # Config:
         self._config = {}
         self._config['identifier'] = ''
-        self._config[''] = ''
 
     def execute(self):
         """
@@ -55,7 +54,7 @@ class ScaffoldFitterStep(WorkflowStepMountPoint):
         :param index: Index of the port to return.
         :param dataIn: The data to set for the port at the given index.
         """
-        self._portData0 = dataIn # file_location
+        self._pointCloudData = dataIn # file_location
 
     def getPortData(self, index):
         """
@@ -65,7 +64,7 @@ class ScaffoldFitterStep(WorkflowStepMountPoint):
 
         :param index: Index of the port to return.
         """
-        return self._portData1 # file_location
+        return self._fittedScaffold # file_location
 
     def configure(self):
         """
