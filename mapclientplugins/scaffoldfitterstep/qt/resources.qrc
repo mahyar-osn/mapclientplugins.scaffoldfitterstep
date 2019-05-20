@@ -1,0 +1,6 @@
+
+<RCC>
+  <qresource prefix="scaffoldfitterstep">
+    <file>images/smooth_volume_fitting.png</file>
+  </qresource>
+</RCC>
