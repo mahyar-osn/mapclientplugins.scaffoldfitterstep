@@ -3,24 +3,28 @@ from PySide import QtGui, QtCore
 from mapclientplugins.scaffoldfitterstep.view.ui_scaffoldfitterwidget import Ui_ScaffoldfitterWidget
 
 from opencmiss.zinchandlers.scenemanipulation import SceneManipulation
+from opencmiss.zincwidgets.basesceneviewerwidget import BaseSceneviewerWidget
+
+from scaffoldmaker.scaffolds import Scaffolds
+
+from scaffoldfitter.src.scaffoldfitter.fitter import Fitter
 
 
 class ScaffoldFitterWidget(QtGui.QWidget):
 
     def __init__(self, model, parent=None):
         super(ScaffoldFitterWidget, self).__init__(parent)
+        self._model = model
+
         self._ui = Ui_ScaffoldfitterWidget()
-        self._ui.setupUi(model.get_shareable_open_gl_widget(), self)
+        self._ui.setupUi(self._get_shareable_open_gl_widget(), self)
         self._setup_handlers()
 
         self._ui.sceneviewerWidget.set_context(model.get_context())
 
-        self._ui.sceneviewerWidget.setContext(model.getContext())
-        self._ui.sceneviewerWidget.setModel(model)
+        # self._ui.sceneviewerWidget.setModel(model)
 
-        self._model = model
-
-        self._ui.sceneviewerWidget.graphicsInitialized.connect(self._graphicsInitialized)
+        self._ui.sceneviewerWidget.graphics_initialized.connect(self._graphics_initialized)
 
         self._scene = None
         self._callback = None
@@ -30,6 +34,12 @@ class ScaffoldFitterWidget(QtGui.QWidget):
 
     def _done_clicked(self):
         self._done_callback()
+
+    def initialise(self):
+        self._model.initialise()
+        self._scene = self._model.get_region().getScene()
+        # self._setupUi()
+        self._graphics_initialized()
 
     def set_settings(self, settings):
         self._settings.update(settings)
@@ -64,3 +74,8 @@ class ScaffoldFitterWidget(QtGui.QWidget):
     def _setup_handlers(self):
         basic_handler = SceneManipulation()
         self._ui.sceneviewerWidget.register_handler(basic_handler)
+
+    def _get_shareable_open_gl_widget(self):
+        context = self._model.get_context()
+        self._shareable_widget = BaseSceneviewerWidget()
+        self._shareable_widget.set_context(context)
