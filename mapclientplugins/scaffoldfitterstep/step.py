@@ -3,11 +3,15 @@
 MAP Client Plugin Step
 """
 import json
+import os
 
 from PySide import QtGui
 
 from mapclient.mountpoints.workflowstep import WorkflowStepMountPoint
 from mapclientplugins.scaffoldfitterstep.configuredialog import ConfigureDialog
+from mapclientplugins.scaffoldfitterstep.model.scaffoldfittermodel import ScaffoldFitterModel
+from mapclientplugins.scaffoldfitterstep.view.scaffoldfitterwidget import ScaffoldFitterWidget
+
 
 
 class ScaffoldFitterStep(WorkflowStepMountPoint):
@@ -35,6 +39,7 @@ class ScaffoldFitterStep(WorkflowStepMountPoint):
         # Config:
         self._config = {}
         self._config['identifier'] = ''
+        self._view = None
 
     def execute(self):
         """
@@ -43,7 +48,15 @@ class ScaffoldFitterStep(WorkflowStepMountPoint):
         may be connected up to a button in a widget for example.
         """
         # Put your execute step code here before calling the '_doneExecution' method.
-        self._doneExecution()
+        if self._view is None:
+            scaffolfittermodel = None
+            scaffolfittermodel = ScaffoldFitterModel()
+            self._view = ScaffoldFitterWidget(scaffolfittermodel)
+            self._view.register_done_callback(self._doneExecution)
+
+        scaffolfittermodel.set_zinc_model_file('D:\sparc\milestones\T2.5_rat-heart\data\scaffold\mesh.exf')
+        self._view.initialise()
+        self._setCurrentWidget(self._view)
 
     def setPortData(self, index, dataIn):
         """
