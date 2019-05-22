@@ -5,9 +5,9 @@ from mapclientplugins.scaffoldfitterstep.view.ui_scaffoldfitterwidget import Ui_
 from opencmiss.zinchandlers.scenemanipulation import SceneManipulation
 from opencmiss.zincwidgets.basesceneviewerwidget import BaseSceneviewerWidget
 
-from scaffoldmaker.scaffolds import Scaffolds
+# from scaffoldmaker.scaffolds import Scaffolds
 
-from scaffoldfitter.src.scaffoldfitter.fitter import Fitter
+# from scaffoldfitter.src.scaffoldfitter.fitter import Fitter
 
 
 class ScaffoldFitterWidget(QtGui.QWidget):
@@ -15,6 +15,7 @@ class ScaffoldFitterWidget(QtGui.QWidget):
     def __init__(self, model, parent=None):
         super(ScaffoldFitterWidget, self).__init__(parent)
         self._model = model
+        self._model.set_align_settings_change_callback(self._align_settings_display)
 
         self._ui = Ui_ScaffoldfitterWidget()
         self._ui.setupUi(self._get_shareable_open_gl_widget(), self)
@@ -35,11 +36,18 @@ class ScaffoldFitterWidget(QtGui.QWidget):
     def _done_clicked(self):
         self._done_callback()
 
+    def register_done_execution(self, callback):
+        self._callback = callback
+
     def initialise(self):
         self._model.initialise()
         self._scene = self._model.get_region().getScene()
-        # self._setupUi()
+        self._setup_ui()
         self._graphics_initialized()
+
+    def _setup_ui(self):
+        self._ui.toolBox.setCurrentIndex(0)
+        self._align_settings_display()
 
     def set_settings(self, settings):
         self._settings.update(settings)
@@ -79,3 +87,10 @@ class ScaffoldFitterWidget(QtGui.QWidget):
         context = self._model.get_context()
         self._shareable_widget = BaseSceneviewerWidget()
         self._shareable_widget.set_context(context)
+
+    def _align_settings_display(self):
+        self._displayReal(self._ui.alignScaleLineEdit, self._model.getAlignScale())
+        self._displayVector(self._ui.alignRotationLineEdit, self._model.getAlignEulerAngles())
+        self._displayVector(self._ui.alignOffsetLineEdit, self._model.getAlignOffset())
+        self._ui.alignMirrorCheckBox.setCheckState(
+            QtCore.Qt.Checked if self._model.isAlignMirror() else QtCore.Qt.Unchecked)
