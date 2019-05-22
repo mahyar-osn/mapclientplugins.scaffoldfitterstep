@@ -23,7 +23,7 @@ class ScaffoldFitterModel(object):
     def _clear_all(self):
         self._scaffold_model = None
         self._point_cloud = None
-        self._modelReferenceCoordinateField = None
+        self._model_reference_coordinate_field = None
 
     def get_context(self):
         return self._context
@@ -31,13 +31,28 @@ class ScaffoldFitterModel(object):
     def get_region(self):
         return self._region
 
+    def get_scene(self):
+        return self._region.getScene()
+
+    def get_align_scale(self):
+        return self._master_model.get_align_scale()
+
+    def get_align_offset(self):
+        return self._master_model.get_align_offset()
+
+    def get_align_euler_angles(self):
+        return self._master_model.get_align_euler_angles()
+
+    def is_align_mirror(self):
+        return self._master_model.is_align_mirror()
+
     def initialise(self, model, point_cloud):
         self._load_scaffold_model(model)
         self._load_point_cloud(point_cloud)
         self._master_model.initialize_problem()
 
-    def set_align_settings_change_callback(self, align_settings_chhange_callback):
-        self._master_model.set_align_settings_change_callback(align_settings_chhange_callback)
+    def set_align_settings_change_callback(self, align_settings_change_callback):
+        self._master_model.set_align_settings_change_callback(align_settings_change_callback)
 
     def _load_scaffold_model(self, model):
         self._scaffold_model = model
