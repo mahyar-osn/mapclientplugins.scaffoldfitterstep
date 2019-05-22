@@ -61,6 +61,15 @@ class MasterModel(object):
     def get_material_module(self):
         return self._materialmodule
 
+    def get_align_scale(self):
+        return self._ScaffoldFitter.getAlignScale()
+
+    def get_align_offset(self):
+        return self._ScaffoldFitter.getAlignOffset()
+
+    def get_align_euler_angles(self):
+        return self._ScaffoldFitter.getAlignEulerAngles()
+
     # def _get_shareable_open_gl_widget(self):
     #     context = self._model.get_context()
     #     self._shareable_widget = BaseSceneviewerWidget()
@@ -80,6 +89,9 @@ class MasterModel(object):
         self._initialize_scene()
         self._show_model_graphics()
 
+    def is_align_mirror(self):
+        return self._ScaffoldFitter.isAlignMirror()
+
     def set_location(self, location):
         self._location = location
 
@@ -90,7 +102,7 @@ class MasterModel(object):
         self._point_cloud = point_cloud
 
     def set_align_settings_change_callback(self, align_settings_change_callback):
-        self._ScaffoldFitter.alignSettingsChangeCallback = align_settings_change_callback
+        self._ScaffoldFitter.setAlignSettingsChangeCallback(align_settings_change_callback)
 
     def _create_line_graphics(self):
         lines = self._region.getScene().createGraphicsLines()
@@ -105,11 +117,21 @@ class MasterModel(object):
         surface = self._scene.createGraphicsSurfaces()
         surface.setCoordinateField(self._model_reference_coordinate_field)
         surface.setRenderPolygonMode(Graphics.RENDER_POLYGON_MODE_SHADED)
-        surface_material = self._materialmodule.findMaterialByName('default_surface')
+        surface_material = self._materialmodule.findMaterialByName('heart_tissue')
         surface.setMaterial(surface_material)
         surface.setName('display_surface')
         # surface.setVisibilityFlag(self.is_display_surface('display_surface'))
         return surface
+
+    def _create_data_point_graphics(self):
+        points = self._scene.createGraphicsPoints()
+        points.setFieldDomainType(Field.DOMAIN_TYPE_DATAPOINTS)
+        points.setCoordinateField(self._data_coordinate_field)
+        point_attr = points.getGraphicspointattributes()
+        point_attr.setGlyphShapeType(Glyph.SHAPE_TYPE_CROSS)
+        point_size = self._ScaffoldFitter.getAutoPointSize()
+        point_attr.setBaseSize(point_size)
+        points.setMaterial(self._materialmodule.findMaterialByName('silver'))
 
     def _initialize_region(self):
         self._region = self._context.createRegion()
@@ -133,8 +155,7 @@ class MasterModel(object):
         self._solidTissue = self._materialmodule.createMaterial()
         self._solidTissue.setName('heart_tissue')
         self._solidTissue.setManaged(True)
-        self._solidTissue.setAttributeReal3(Material.ATTRIBUTE_AMBIENT, [0.8, 0.43, 0.33])
-        self._solidTissue.setAttributeReal3(Material.ATTRIBUTE_DIFFUSE, [0.8, 0.43, 0.33])
+        self._solidTissue.setAttributeReal3(Material.ATTRIBUTE_AMBIENT, [0.913, 0.541, 0.33])
         self._solidTissue.setAttributeReal3(Material.ATTRIBUTE_EMISSION, [0.0, 0.0, 0.0])
         self._solidTissue.setAttributeReal3(Material.ATTRIBUTE_SPECULAR, [0.2, 0.2, 0.3])
         self._solidTissue.setAttributeReal(Material.ATTRIBUTE_ALPHA, 0.5)
@@ -183,7 +204,7 @@ class MasterModel(object):
         result = self._region.read(sir)
         if result != ZINC_OK:
             raise ValueError('Failed to read point cloud')
-        self._data_coordinate_field = self._ScaffoldFitter.getDataCoordinateField()
+        self._data_coordinate_field = self._ScaffoldFitter._dataCoordinateField = self._ScaffoldFitter.getDataCoordinateField()
 
     def _initialize_project_surface_group(self):
         self._project_surface_group, self._project_surface_element_group = self._ScaffoldFitter.getProjectSurfaceGroup()
@@ -208,6 +229,7 @@ class MasterModel(object):
         self._scene.beginChange()
         self._create_line_graphics()
         self._create_surface_graphics()
+        self._create_data_point_graphics()
         self._scene.endChange()
 
         # materialmodule = scene.getMaterialmodule()
