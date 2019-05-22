@@ -53,8 +53,8 @@ class ScaffoldFitterStep(WorkflowStepMountPoint):
             self._view = ScaffoldFitterWidget(scaffolfittermodel)
             self._view.register_done_execution(self._doneExecution)
 
-        scaffolfittermodel.initialise('D:\sparc\milestones\T2.5_rat-heart\data\scaffold\mesh.exf', self._pointCloudData)
-        self._view.initialise()
+        # scaffolfittermodel.initialise('D:\sparc\milestones\T2.5_rat-heart\data\scaffold\mesh.exf', self._pointCloudData)
+        self._view.initialise('D:\sparc\milestones\T2.5_rat-heart\data\scaffold\mesh.exf', self._pointCloudData)
         self._setCurrentWidget(self._view)
 
     def setPortData(self, index, dataIn):
