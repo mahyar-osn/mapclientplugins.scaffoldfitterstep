@@ -49,12 +49,11 @@ class ScaffoldFitterStep(WorkflowStepMountPoint):
         """
         # Put your execute step code here before calling the '_doneExecution' method.
         if self._view is None:
-            scaffolfittermodel = None
             scaffolfittermodel = ScaffoldFitterModel()
             self._view = ScaffoldFitterWidget(scaffolfittermodel)
-            self._view.register_done_callback(self._doneExecution)
+            self._view.register_done_execution(self._doneExecution)
 
-        scaffolfittermodel.set_zinc_model_file('D:\sparc\milestones\T2.5_rat-heart\data\scaffold\mesh.exf')
+        scaffolfittermodel.initialise('D:\sparc\milestones\T2.5_rat-heart\data\scaffold\mesh.exf', self._pointCloudData)
         self._view.initialise()
         self._setCurrentWidget(self._view)
 
