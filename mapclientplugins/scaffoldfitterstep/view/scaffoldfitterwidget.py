@@ -39,8 +39,8 @@ class ScaffoldFitterWidget(QtGui.QWidget):
     def register_done_execution(self, callback):
         self._callback = callback
 
-    def initialise(self):
-        self._model.initialise()
+    def initialise(self, scaffold_model, point_cloud):
+        self._model.initialise(scaffold_model, point_cloud)
         self._scene = self._model.get_region().getScene()
         self._setup_ui()
         self._graphics_initialized()
@@ -89,8 +89,18 @@ class ScaffoldFitterWidget(QtGui.QWidget):
         self._shareable_widget.set_context(context)
 
     def _align_settings_display(self):
-        self._displayReal(self._ui.alignScaleLineEdit, self._model.getAlignScale())
-        self._displayVector(self._ui.alignRotationLineEdit, self._model.getAlignEulerAngles())
-        self._displayVector(self._ui.alignOffsetLineEdit, self._model.getAlignOffset())
+        self._display_real(self._ui.alignScaleLineEdit, self._model.get_align_scale())
+        self._display_vector(self._ui.alignRotationLineEdit, self._model.get_align_euler_angles())
+        self._display_vector(self._ui.alignOffsetLineEdit, self._model.get_align_offset())
         self._ui.alignMirrorCheckBox.setCheckState(
-            QtCore.Qt.Checked if self._model.isAlignMirror() else QtCore.Qt.Unchecked)
+            QtCore.Qt.Checked if self._model.is_align_mirror() else QtCore.Qt.Unchecked)
+
+    def _display_real(self, widget, value):
+        new_text = '{:.4g}'.format(value)
+        widget.setText(new_text)
+
+    def _display_vector(self, widget, values, number_format = '{:.4g}'):
+        new_text = ", ".join(number_format.format(value) for value in values)
+        widget.setText(new_text)
+
+
