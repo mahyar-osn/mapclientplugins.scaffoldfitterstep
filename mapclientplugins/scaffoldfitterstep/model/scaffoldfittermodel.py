@@ -46,6 +46,12 @@ class ScaffoldFitterModel(object):
     def is_align_mirror(self):
         return self._master_model.is_align_mirror()
 
+    def align_auto_centre_button_clicked(self):
+        self._master_model.auto_centre_model_on_data()
+
+    def reset_clicked(self):
+        self._master_model.rigid_align()
+
     def initialise(self, model, point_cloud):
         self._load_scaffold_model(model)
         self._load_point_cloud(point_cloud)
