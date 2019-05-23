@@ -1,6 +1,7 @@
 from PySide import QtGui, QtCore
 
-from mapclientplugins.scaffoldfitterstep.view.ui_scaffoldfitterwidget import Ui_ScaffoldfitterWidget
+# from mapclientplugins.scaffoldfitterstep.view.ui_scaffoldfitterwidget import Ui_ScaffoldfitterWidget
+from .ui_scaffoldfitterwidget import Ui_ScaffoldfitterWidget
 
 from opencmiss.zinchandlers.scenemanipulation import SceneManipulation
 from opencmiss.zincwidgets.basesceneviewerwidget import BaseSceneviewerWidget
@@ -22,10 +23,9 @@ class ScaffoldFitterWidget(QtGui.QWidget):
         self._setup_handlers()
 
         self._ui.sceneviewerWidget.set_context(model.get_context())
-
-        # self._ui.sceneviewerWidget.setModel(model)
-
         self._ui.sceneviewerWidget.graphics_initialized.connect(self._graphics_initialized)
+
+        self._makeConnections()
 
         self._scene = None
         self._callback = None
@@ -33,8 +33,14 @@ class ScaffoldFitterWidget(QtGui.QWidget):
         self._settings = {'view-parameters': {}}
         self._done_callback = None
 
+    def _makeConnections(self):
+        self._ui.doneButton.clicked.connect(self._done_clicked)
+        self._ui.viewAllButton.clicked.connect(self._view_all)
+        self._ui.alignAutoCentreButton.clicked.connect(self._align_auto_centre_button_clicked)
+        self._ui.alignResetButton.clicked.connect(self._reset_clicked)
+
     def _done_clicked(self):
-        self._done_callback()
+        self._callback()
 
     def register_done_execution(self, callback):
         self._callback = callback
@@ -82,6 +88,12 @@ class ScaffoldFitterWidget(QtGui.QWidget):
     def _setup_handlers(self):
         basic_handler = SceneManipulation()
         self._ui.sceneviewerWidget.register_handler(basic_handler)
+
+    def _align_auto_centre_button_clicked(self):
+        self._model.align_auto_centre_button_clicked()
+
+    def _reset_clicked(self):
+        self._model.reset_clicked()
 
     def _get_shareable_open_gl_widget(self):
         context = self._model.get_context()
