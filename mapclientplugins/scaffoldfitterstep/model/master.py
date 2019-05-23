@@ -104,6 +104,15 @@ class MasterModel(object):
     def set_align_settings_change_callback(self, align_settings_change_callback):
         self._ScaffoldFitter.setAlignSettingsChangeCallback(align_settings_change_callback)
 
+    def auto_centre_model_on_data(self):
+        self._ScaffoldFitter.autoCentreModelOnData()
+        self._model_coordinate_field = self._ScaffoldFitter.setStatePostAlign()
+        self._set_model_graphics_post_align()
+
+    def rigid_align(self):
+        self._ScaffoldFitter.initializeRigidAlignment()
+        self._set_model_graphics_post_align()
+
     def _create_line_graphics(self):
         lines = self._region.getScene().createGraphicsLines()
         fieldmodule = self._context.getMaterialmodule()
@@ -128,7 +137,7 @@ class MasterModel(object):
         points.setFieldDomainType(Field.DOMAIN_TYPE_DATAPOINTS)
         points.setCoordinateField(self._data_coordinate_field)
         point_attr = points.getGraphicspointattributes()
-        point_attr.setGlyphShapeType(Glyph.SHAPE_TYPE_CROSS)
+        point_attr.setGlyphShapeType(Glyph.SHAPE_TYPE_POINT)
         point_size = self._ScaffoldFitter.getAutoPointSize()
         point_attr.setBaseSize(point_size)
         points.setMaterial(self._materialmodule.findMaterialByName('silver'))
@@ -232,29 +241,9 @@ class MasterModel(object):
         self._create_data_point_graphics()
         self._scene.endChange()
 
-        # materialmodule = scene.getMaterialmodule()
-        # axes = scene.createGraphicsPoints()
-        # pointAttr = axes.getGraphicspointattributes()
-        # pointAttr.setGlyphShapeType(Glyph.SHAPE_TYPE_AXES_XYZ)
-        # pointAttr.setBaseSize(1.0)
-        # axes.setMaterial(materialmodule.findMaterialByName('brown'))
-        # points = scene.createGraphicsPoints()
-        # points.setFieldDomainType(Field.DOMAIN_TYPE_DATAPOINTS)
-        # points.setCoordinateField(self._dataCoordinateField)
-        # pointAttr = points.getGraphicspointattributes()
-        # pointAttr.setGlyphShapeType(Glyph.SHAPE_TYPE_CROSS)
-        # pointSize = self._getAutoPointSize()
-        # pointAttr.setBaseSize(pointSize)
-        # points.setMaterial(materialmodule.findMaterialByName('silver'))
-        # lines = scene.createGraphicsLines()
-        # if self._mesh.getDimension() == 3:
-        #     lines.setExterior(True)
-        # lines.setName('fit-lines')
-        # lines.setCoordinateField(self._modelTransformedCoordinateField)
-        # surfaces = scene.createGraphicsSurfaces()
-        # if self._projectSurfaceElementGroup is not None:
-        #     surfaces.setSubgroupField(self._projectSurfaceElementGroup)
-        # surfaces.setName('fit-surfaces')
-        # surfaces.setCoordinateField(self._modelTransformedCoordinateField)
-        # surfaces.setMaterial(self._surfaceMaterial)
-
+    def _set_model_graphics_post_align(self):
+        self._scene.beginChange()
+        for name in ['display_lines', 'display_surface']:
+            graphics = self._scene.findGraphicsByName(name)
+            graphics.setCoordinateField(self._model_coordinate_field)
+        self._scene.endChange()
