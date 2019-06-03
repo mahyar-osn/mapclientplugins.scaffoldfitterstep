@@ -85,7 +85,7 @@ class MasterModel(object):
         self._initialize_model_centre()
         self._initialize_project_surface_group()
         self._initialize_active_data_point()
-        self._ScaffoldFitter.applyAlignSettings(first=True)
+        self._ScaffoldFitter.applyAlignSettings()
         self._initialize_scene()
         self._show_model_graphics()
 
