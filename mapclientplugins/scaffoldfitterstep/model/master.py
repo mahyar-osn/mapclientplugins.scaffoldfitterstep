@@ -85,7 +85,7 @@ class MasterModel(object):
         self._initialize_model_centre()
         self._initialize_project_surface_group()
         self._initialize_active_data_point()
-        self._ScaffoldFitter.applyAlignSettings()
+        self._ScaffoldFitter.applyAlignSettings(first=True)
         self._initialize_scene()
         self._show_model_graphics()
 
@@ -105,13 +105,12 @@ class MasterModel(object):
         self._ScaffoldFitter.setAlignSettingsChangeCallback(align_settings_change_callback)
 
     def auto_centre_model_on_data(self):
-        self._ScaffoldFitter.autoCentreModelOnData()
-        self._model_coordinate_field = self._ScaffoldFitter.setStatePostAlign()
+        self._model_coordinate_field = self._ScaffoldFitter.autoCentreModelOnData()
         self._set_model_graphics_post_align()
 
     def rigid_align(self):
-        self._ScaffoldFitter.initializeRigidAlignment()
-        self._set_model_graphics_post_align()
+        _ = self._ScaffoldFitter.initializeRigidAlignment()
+        self._model_coordinate_field = self._ScaffoldFitter.setStatePostAlign()
 
     def _create_line_graphics(self):
         lines = self._region.getScene().createGraphicsLines()
@@ -137,7 +136,7 @@ class MasterModel(object):
         points.setFieldDomainType(Field.DOMAIN_TYPE_DATAPOINTS)
         points.setCoordinateField(self._data_coordinate_field)
         point_attr = points.getGraphicspointattributes()
-        point_attr.setGlyphShapeType(Glyph.SHAPE_TYPE_POINT)
+        point_attr.setGlyphShapeType(Glyph.SHAPE_TYPE_CROSS)
         point_size = self._ScaffoldFitter.getAutoPointSize()
         point_attr.setBaseSize(point_size)
         points.setMaterial(self._materialmodule.findMaterialByName('silver'))
@@ -196,12 +195,12 @@ class MasterModel(object):
     def _initialize_scaffold_model(self, reference=True):
         if reference:
             if self._model_reference_coordinate_field is None:
-                result = self._region.readFile(self._scaffold_model)
+                result = self._region.readFile(self._scaffold_model+'.exf')
                 if result != ZINC_OK:
                     raise ValueError('Failed to read reference scaffold model')
                 self._initialize_reference_model_coordinate()
         else:
-            result = self._region.readFile(self._scaffold_model)
+            result = self._region.readFile(self._scaffold_model+'.exf')
             if result != ZINC_OK:
                 raise ValueError('Failed to read scaffold model')
             self._model_coordinate_field = self._ScaffoldFitter.modelCoordinateField = self._ScaffoldFitter.getModelCoordinateField()
