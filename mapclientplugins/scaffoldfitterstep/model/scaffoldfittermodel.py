@@ -9,7 +9,7 @@ from opencmiss.zinc.scenefilter import Scenefilter
 from opencmiss.zinc.scenecoordinatesystem import SCENECOORDINATESYSTEM_NORMALISED_WINDOW_FIT_LEFT
 from opencmiss.zinc.status import OK as ZINC_OK
 
-from src.scaffoldfitter.fitter import Fitter
+from python_packages.scaffoldfitter.src.scaffoldfitter.fitter import Fitter
 
 
 class ScaffoldFitterModel(object):
@@ -18,17 +18,14 @@ class ScaffoldFitterModel(object):
         self._clear_all()
 
         self._context = context
-        self._initialise_region()
         self._material_module = self._context.getMaterialmodule()
 
-        self._ScaffoldFitter = Fitter(self._region)
-
-        self._reset_align_settings()
         self._initialise_surface_material()
         self._initialise_glyph_material()
         self._initialise_tessellation(12)
 
     def _clear_all(self):
+        self._ScaffoldFitter = None
         self._context = None
         self._region = None
         self._materialmodule = None
@@ -72,30 +69,36 @@ class ScaffoldFitterModel(object):
     def get_align_euler_angles(self):
         return self._ScaffoldFitter.getAlignEulerAngles()
 
-    def _initialise_region(self):
-        self._region = self._context.createRegion()
+    def initialise_region(self, region):
+        self._region = region
 
-    def initialise(self, model, point_cloud):
-        self._load_scaffold_model(model)
+    def initialise(self, point_cloud):
+        self._ScaffoldFitter = Fitter(self._region)
+        self._reset_align_settings()
+
         self._load_point_cloud(point_cloud)
         self.initialise_problem()
 
-    def _load_scaffold_model(self, model):
-        self._scaffold_model = model
-        self.set_scaffold_model(self._scaffold_model)
+    def _initialise_fitter_mode(self):
+        self._ScaffoldFitter = Fitter(self._region)
 
     def _load_point_cloud(self, point_cloud):
         self._point_cloud = point_cloud
         self.set_point_cloud(self._point_cloud)
 
     def initialise_problem(self):
-        self._initialise_scaffold_model(reference=True)  # once to generate a model with reference field
-        self._initialise_scaffold_model(reference=False)  # again as a target model
-        self._initialise_point_cloud()
-        self._initialise_model_centre()
-        self._initialise_project_surface_group()
-        self._initialise_active_data_point()
-        self._ScaffoldFitter.applyAlignSettings()
+        if self._region is not None:
+            self._initialise_scaffold_model(reference=True)  # once to generate a model with reference field
+            self._initialise_scaffold_model(reference=False)  # again as a target model
+            self._initialise_point_cloud()
+            self._initialise_model_centre()
+            # self._initialise_project_surface_group()
+            self._initialise_active_data_point()
+            # self._ScaffoldFitter.applyAlignSettings()
+        else:
+            self._initialise_point_cloud()
+            self._initialise_active_data_point()
+
         self._initialise_scene()
         self._show_model_graphics()
 
@@ -201,16 +204,15 @@ class ScaffoldFitterModel(object):
 
     def _initialise_scaffold_model(self, reference=True):
         if reference:
-            if self._model_reference_coordinate_field is None:
-                result = self._region.readFile(self._scaffold_model+'.exf')
-                if result != ZINC_OK:
-                    raise ValueError('Failed to read reference scaffold model')
+            if self._model_reference_coordinate_field is not None:
+                self._model_reference_coordinate_field = None
+                self._initialise_reference_model_coordinate()
+            else:
                 self._initialise_reference_model_coordinate()
         else:
-            result = self._region.readFile(self._scaffold_model+'.exf')
-            if result != ZINC_OK:
-                raise ValueError('Failed to read scaffold model')
-            self._model_coordinate_field = self._ScaffoldFitter.modelCoordinateField = self._ScaffoldFitter.getModelCoordinateField()
+            if self._model_coordinate_field is not None:
+                self._model_coordinate_field = None
+                self._model_coordinate_field = self._ScaffoldFitter.modelCoordinateField = self._ScaffoldFitter.getModelCoordinateField()
 
     def _initialise_point_cloud(self):
         sir = self._region.createStreaminformationRegion()
@@ -220,8 +222,6 @@ class ScaffoldFitterModel(object):
         if result != ZINC_OK:
             raise ValueError('Failed to read point cloud')
         self._data_coordinate_field = self._ScaffoldFitter._dataCoordinateField = self._ScaffoldFitter.getDataCoordinateField()
-
-    def _initialise_project_surface_group(self):
         self._project_surface_group, self._project_surface_element_group = self._ScaffoldFitter.getProjectSurfaceGroup()
 
     def _initialise_model_centre(self):
@@ -242,8 +242,9 @@ class ScaffoldFitterModel(object):
 
     def _show_model_graphics(self):
         self._scene.beginChange()
-        self._create_line_graphics()
-        self._create_surface_graphics()
+        if self._region is not None:
+            self._create_line_graphics()
+            self._create_surface_graphics()
         self._create_data_point_graphics()
         self._scene.endChange()
 
