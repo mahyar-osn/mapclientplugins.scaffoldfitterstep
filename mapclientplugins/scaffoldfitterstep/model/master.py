@@ -7,7 +7,8 @@ class MasterModel(object):
 
     def __init__(self, context):
 
-        self._context = Context(context)
+        # self._context = Context(context)
+        self._context = context
         self._scaffoldFitterModel = ScaffoldFitterModel(self._context)
 
     def get_context(self):
@@ -37,8 +38,11 @@ class MasterModel(object):
     def get_align_euler_angles(self):
         return self._scaffoldFitterModel.get_align_euler_angles()
 
-    def initialise(self, point_cloud):
-        self._scaffoldFitterModel.initialise(point_cloud)
+    def initialise(self, point_cloud, region_initialised=True):
+        if region_initialised:
+            self._scaffoldFitterModel.initialise(point_cloud)
+        else:
+            self._scaffoldFitterModel.initialise(point_cloud, region_initialised=False)
 
     def initialise_region(self, region):
         self._scaffoldFitterModel.initialise_region(region)
