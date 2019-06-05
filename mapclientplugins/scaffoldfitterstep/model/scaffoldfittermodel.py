@@ -20,6 +20,8 @@ class ScaffoldFitterModel(object):
         self._context = context
         self._material_module = self._context.getMaterialmodule()
 
+        self._region_initialised = False
+
         self._initialise_surface_material()
         self._initialise_glyph_material()
         self._initialise_tessellation(12)
@@ -72,22 +74,29 @@ class ScaffoldFitterModel(object):
     def initialise_region(self, region):
         self._region = region
 
-    def initialise(self, point_cloud):
-        self._ScaffoldFitter = Fitter(self._region)
-        self._reset_align_settings()
-
-        self._load_point_cloud(point_cloud)
-        self.initialise_problem()
-
-    def _initialise_fitter_mode(self):
-        self._ScaffoldFitter = Fitter(self._region)
+    def initialise(self, point_cloud, region_initialised=True):
+        if region_initialised:
+            self._region_initialised = True
+            if self._ScaffoldFitter is None:
+                self._ScaffoldFitter = Fitter(self._region)
+            else:
+                self._ScaffoldFitter = None
+                self._ScaffoldFitter = Fitter(self._region)
+            self._reset_align_settings()
+            self._load_point_cloud(point_cloud)
+            self.initialise_problem()
+        else:
+            self._ScaffoldFitter = Fitter(self._region)
+            self._reset_align_settings()
+            self._load_point_cloud(point_cloud)
+            self.initialise_problem()
 
     def _load_point_cloud(self, point_cloud):
         self._point_cloud = point_cloud
         self.set_point_cloud(self._point_cloud)
 
     def initialise_problem(self):
-        if self._region is not None:
+        if self._region_initialised:
             self._initialise_scaffold_model(reference=True)  # once to generate a model with reference field
             self._initialise_scaffold_model(reference=False)  # again as a target model
             self._initialise_point_cloud()
@@ -242,7 +251,7 @@ class ScaffoldFitterModel(object):
 
     def _show_model_graphics(self):
         self._scene.beginChange()
-        if self._region is not None:
+        if self._region_initialised:
             self._create_line_graphics()
             self._create_surface_graphics()
         self._create_data_point_graphics()
