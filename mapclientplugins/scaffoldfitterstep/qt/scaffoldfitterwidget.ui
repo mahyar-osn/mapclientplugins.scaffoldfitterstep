@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>833</width>
-    <height>632</height>
+    <width>1652</width>
+    <height>998</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -98,7 +98,7 @@
             <x>0</x>
             <y>0</y>
             <width>344</width>
-            <height>608</height>
+            <height>974</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -143,22 +143,273 @@ QToolBox {
 }</string>
              </property>
              <property name="currentIndex">
-              <number>2</number>
+              <number>0</number>
              </property>
              <property name="tabSpacing">
               <number>6</number>
              </property>
              <widget class="QWidget" name="Scaffoldpage">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>340</width>
+                <height>856</height>
+               </rect>
+              </property>
               <attribute name="label">
                <string>Scaffold Parametrs</string>
               </attribute>
+              <widget class="QScrollArea" name="scrollArea_2">
+               <property name="geometry">
+                <rect>
+                 <x>10</x>
+                 <y>10</y>
+                 <width>321</width>
+                 <height>481</height>
+                </rect>
+               </property>
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="verticalScrollBarPolicy">
+                <enum>Qt::ScrollBarAsNeeded</enum>
+               </property>
+               <property name="widgetResizable">
+                <bool>true</bool>
+               </property>
+               <widget class="QWidget" name="scrollAreaWidgetContents_2">
+                <property name="geometry">
+                 <rect>
+                  <x>0</x>
+                  <y>0</y>
+                  <width>319</width>
+                  <height>479</height>
+                 </rect>
+                </property>
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <layout class="QVBoxLayout" name="verticalLayout_8">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0">
+                   <item>
+                    <widget class="QFrame" name="scaffoldFrame">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="minimumSize">
+                      <size>
+                       <width>0</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="frameShape">
+                      <enum>QFrame::StyledPanel</enum>
+                     </property>
+                     <property name="frameShadow">
+                      <enum>QFrame::Raised</enum>
+                     </property>
+                     <layout class="QVBoxLayout" name="verticalLayout_14">
+                      <item>
+                       <widget class="QFrame" name="subscaffold_frame">
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                        <property name="minimumSize">
+                         <size>
+                          <width>0</width>
+                          <height>0</height>
+                         </size>
+                        </property>
+                        <property name="frameShape">
+                         <enum>QFrame::StyledPanel</enum>
+                        </property>
+                        <property name="frameShadow">
+                         <enum>QFrame::Raised</enum>
+                        </property>
+                        <layout class="QVBoxLayout" name="verticalLayout_15">
+                         <property name="leftMargin">
+                          <number>0</number>
+                         </property>
+                         <property name="topMargin">
+                          <number>0</number>
+                         </property>
+                         <property name="rightMargin">
+                          <number>0</number>
+                         </property>
+                         <property name="bottomMargin">
+                          <number>0</number>
+                         </property>
+                        </layout>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QFrame" name="meshType_frame">
+                        <property name="frameShape">
+                         <enum>QFrame::StyledPanel</enum>
+                        </property>
+                        <property name="frameShadow">
+                         <enum>QFrame::Raised</enum>
+                        </property>
+                        <layout class="QFormLayout" name="formLayout_4">
+                         <property name="leftMargin">
+                          <number>0</number>
+                         </property>
+                         <property name="rightMargin">
+                          <number>0</number>
+                         </property>
+                         <item row="0" column="0">
+                          <widget class="QLabel" name="meshType_label">
+                           <property name="text">
+                            <string>Mesh type:</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item row="0" column="1">
+                          <widget class="QComboBox" name="meshType_comboBox"/>
+                         </item>
+                         <item row="1" column="0">
+                          <widget class="QLabel" name="parameterSet_label">
+                           <property name="text">
+                            <string>Parameter set:</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item row="1" column="1">
+                          <widget class="QComboBox" name="parameterSet_comboBox"/>
+                         </item>
+                        </layout>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="Line" name="scaffoldFrame_line_1">
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QFrame" name="meshTypeOptions_frame">
+                        <property name="frameShape">
+                         <enum>QFrame::StyledPanel</enum>
+                        </property>
+                        <property name="frameShadow">
+                         <enum>QFrame::Raised</enum>
+                        </property>
+                        <layout class="QVBoxLayout" name="verticalLayout_16">
+                         <property name="leftMargin">
+                          <number>0</number>
+                         </property>
+                         <property name="rightMargin">
+                          <number>0</number>
+                         </property>
+                        </layout>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="Line" name="scaffoldFrame_line_2">
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QFrame" name="modifyOptions_frame">
+                        <property name="frameShape">
+                         <enum>QFrame::StyledPanel</enum>
+                        </property>
+                        <property name="frameShadow">
+                         <enum>QFrame::Raised</enum>
+                        </property>
+                        <layout class="QVBoxLayout" name="verticalLayout_17">
+                         <property name="leftMargin">
+                          <number>0</number>
+                         </property>
+                         <property name="rightMargin">
+                          <number>0</number>
+                         </property>
+                         <item>
+                          <widget class="QLabel" name="deleteElementRanges_label">
+                           <property name="text">
+                            <string>Delete element ID ranges (e.g. 1,2-5,13):</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QLineEdit" name="deleteElementsRanges_lineEdit"/>
+                         </item>
+                         <item>
+                          <widget class="QLabel" name="scale_label">
+                           <property name="text">
+                            <string>Scale x*y*z:</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QLineEdit" name="scale_lineEdit"/>
+                         </item>
+                        </layout>
+                       </widget>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="verticalSpacer">
+                     <property name="orientation">
+                      <enum>Qt::Vertical</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>20</width>
+                       <height>40</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
+                 </item>
+                </layout>
+               </widget>
+              </widget>
               <widget class="QGroupBox" name="displayOptions_groupBox">
                <property name="geometry">
                 <rect>
                  <x>0</x>
-                 <y>50</y>
+                 <y>500</y>
                  <width>331</width>
-                 <height>173</height>
+                 <height>195</height>
                 </rect>
                </property>
                <property name="sizePolicy">
@@ -170,12 +421,203 @@ QToolBox {
                <property name="title">
                 <string>Display options:</string>
                </property>
-               <layout class="QVBoxLayout" name="verticalLayout_8">
+               <layout class="QVBoxLayout" name="verticalLayout_9">
                 <item>
-                 <widget class="QCheckBox" name="displayAxes_checkBox">
-                  <property name="text">
-                   <string>Axes</string>
+                 <widget class="QFrame" name="displayNodes_frame">
+                  <property name="frameShape">
+                   <enum>QFrame::StyledPanel</enum>
                   </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Raised</enum>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_6">
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QCheckBox" name="displayNodePoints_checkBox">
+                     <property name="text">
+                      <string>Node points</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QCheckBox" name="displayNodeNumbers_checkBox">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="text">
+                      <string>Node numbers</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QCheckBox" name="displayNodeDerivatives_checkBox">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="text">
+                      <string>Node derivatives</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="displayNodes_horizontalSpacer">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QFrame" name="displayNodeDerivativeLabels_frame">
+                  <property name="frameShape">
+                   <enum>QFrame::StyledPanel</enum>
+                  </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Raised</enum>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_7">
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <spacer name="displayNodeDerivativeLabels_horizontalSpacer">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item>
+                    <widget class="QCheckBox" name="displayNodeDerivativeLabelsD1_checkBox">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="text">
+                      <string>D1</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QCheckBox" name="displayNodeDerivativeLabelsD2_checkBox">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="text">
+                      <string>D2</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QCheckBox" name="displayNodeDerivativeLabelsD3_checkBox">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="text">
+                      <string>D3</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QCheckBox" name="displayNodeDerivativeLabelsD12_checkBox">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="text">
+                      <string>D12</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QCheckBox" name="displayNodeDerivativeLabelsD13_checkBox">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="text">
+                      <string>D13</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QCheckBox" name="displayNodeDerivativeLabelsD23_checkBox">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="text">
+                      <string>D23</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QCheckBox" name="displayNodeDerivativeLabelsD123_checkBox">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="text">
+                      <string>D123</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
                  </widget>
                 </item>
                 <item>
@@ -208,24 +650,29 @@ QToolBox {
                    </item>
                    <item>
                     <widget class="QCheckBox" name="displayLinesExterior_checkBox">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
                      <property name="text">
                       <string>Exterior</string>
                      </property>
                     </widget>
                    </item>
                    <item>
-                    <widget class="QLabel" name="displayLinesDummy1_label">
-                     <property name="text">
-                      <string/>
+                    <spacer name="displayLines_horizontalSpacer">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
                      </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QLabel" name="displayLinesDummy2_label">
-                     <property name="text">
-                      <string/>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
                      </property>
-                    </widget>
+                    </spacer>
                    </item>
                   </layout>
                  </widget>
@@ -260,6 +707,12 @@ QToolBox {
                    </item>
                    <item>
                     <widget class="QCheckBox" name="displaySurfacesExterior_checkBox">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
                      <property name="text">
                       <string>Exterior</string>
                      </property>
@@ -267,6 +720,12 @@ QToolBox {
                    </item>
                    <item>
                     <widget class="QCheckBox" name="displaySurfacesTranslucent_checkBox">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
                      <property name="text">
                       <string>Transluc.</string>
                      </property>
@@ -274,48 +733,29 @@ QToolBox {
                    </item>
                    <item>
                     <widget class="QCheckBox" name="displaySurfacesWireframe_checkBox">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
                      <property name="text">
                       <string>Wireframe</string>
                      </property>
                     </widget>
                    </item>
-                  </layout>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QFrame" name="displayNodes_frame">
-                  <property name="frameShape">
-                   <enum>QFrame::StyledPanel</enum>
-                  </property>
-                  <property name="frameShadow">
-                   <enum>QFrame::Raised</enum>
-                  </property>
-                  <layout class="QHBoxLayout" name="horizontalLayout_6">
-                   <property name="leftMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="topMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="rightMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="bottomMargin">
-                    <number>0</number>
-                   </property>
                    <item>
-                    <widget class="QCheckBox" name="displayNodeNumbers_checkBox">
-                     <property name="text">
-                      <string>Node numbers</string>
+                    <spacer name="displaySurfaces_horizontalSpacer">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
                      </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QCheckBox" name="displayNodeDerivatives_checkBox">
-                     <property name="text">
-                      <string>Node derivatives</string>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
                      </property>
-                    </widget>
+                    </spacer>
                    </item>
                   </layout>
                  </widget>
@@ -348,83 +788,85 @@ QToolBox {
                      </property>
                     </widget>
                    </item>
+                   <item>
+                    <widget class="QCheckBox" name="displayElementAxes_checkBox">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="text">
+                      <string>Element axes</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="displayElements_horizontalSpacer">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
                   </layout>
                  </widget>
                 </item>
-               </layout>
-              </widget>
-              <widget class="QFrame" name="modifyOptions_frame">
-               <property name="geometry">
-                <rect>
-                 <x>0</x>
-                 <y>220</y>
-                 <width>331</width>
-                 <height>104</height>
-                </rect>
-               </property>
-               <property name="frameShape">
-                <enum>QFrame::StyledPanel</enum>
-               </property>
-               <property name="frameShadow">
-                <enum>QFrame::Raised</enum>
-               </property>
-               <layout class="QVBoxLayout" name="verticalLayout_9">
                 <item>
-                 <widget class="QLabel" name="deleteElementRanges_label">
-                  <property name="text">
-                   <string>Delete element ID ranges (e.g. 1,2-5,13):</string>
+                 <widget class="QFrame" name="displayMisc_frame">
+                  <property name="frameShape">
+                   <enum>QFrame::StyledPanel</enum>
                   </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLineEdit" name="deleteElementsRanges_lineEdit"/>
-                </item>
-                <item>
-                 <widget class="QLabel" name="scale_label">
-                  <property name="text">
-                   <string>Scale x*y*z:</string>
+                  <property name="frameShadow">
+                   <enum>QFrame::Raised</enum>
                   </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_8">
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QCheckBox" name="displayAxes_checkBox">
+                     <property name="text">
+                      <string>Axes</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QCheckBox" name="displayAnnotationPoints_checkBox">
+                     <property name="text">
+                      <string>Annotation points</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="displaytMisc_horizontalSpacer">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
                  </widget>
-                </item>
-                <item>
-                 <widget class="QLineEdit" name="scale_lineEdit"/>
-                </item>
-               </layout>
-              </widget>
-              <widget class="QFrame" name="meshType_frame">
-               <property name="geometry">
-                <rect>
-                 <x>0</x>
-                 <y>10</y>
-                 <width>341</width>
-                 <height>28</height>
-                </rect>
-               </property>
-               <property name="frameShape">
-                <enum>QFrame::StyledPanel</enum>
-               </property>
-               <property name="frameShadow">
-                <enum>QFrame::Raised</enum>
-               </property>
-               <layout class="QFormLayout" name="formLayout_3">
-                <property name="fieldGrowthPolicy">
-                 <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-                </property>
-                <property name="topMargin">
-                 <number>3</number>
-                </property>
-                <property name="bottomMargin">
-                 <number>3</number>
-                </property>
-                <item row="0" column="0">
-                 <widget class="QLabel" name="meshType_label">
-                  <property name="text">
-                   <string>Mesh type:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="1">
-                 <widget class="QComboBox" name="meshType_comboBox"/>
                 </item>
                </layout>
               </widget>
@@ -435,7 +877,7 @@ QToolBox {
                 <x>0</x>
                 <y>0</y>
                 <width>340</width>
-                <height>490</height>
+                <height>856</height>
                </rect>
               </property>
               <property name="sizePolicy">
@@ -466,7 +908,7 @@ QToolBox {
                <item>
                 <widget class="QGroupBox" name="alignSettingsGroupBox">
                  <property name="title">
-                  <string>Alignment Settings</string>
+                  <string>Alignment</string>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_7">
                   <property name="spacing">
@@ -492,7 +934,7 @@ QToolBox {
                       <verstretch>0</verstretch>
                      </sizepolicy>
                     </property>
-                    <layout class="QGridLayout" name="gridLayout" rowstretch="2">
+                    <layout class="QGridLayout" name="gridLayout" rowstretch="0">
                      <property name="leftMargin">
                       <number>0</number>
                      </property>
@@ -508,20 +950,17 @@ QToolBox {
                      <property name="spacing">
                       <number>3</number>
                      </property>
-                     <item row="0" column="1">
-                      <widget class="QPushButton" name="alignSaveButton">
-                       <property name="enabled">
-                        <bool>true</bool>
-                       </property>
+                     <item row="0" column="0">
+                      <widget class="QPushButton" name="alignAutoCentreButton">
                        <property name="toolTip">
-                        <string>Save alignment settings for recall later or when next run</string>
+                        <string>Offset the model to the centre of the data points. May need to click View All afterwards.</string>
                        </property>
                        <property name="text">
-                        <string>Save Settings</string>
+                        <string>Align Scaffold To Data</string>
                        </property>
                       </widget>
                      </item>
-                     <item row="0" column="0">
+                     <item row="0" column="1">
                       <widget class="QPushButton" name="alignLoadButton">
                        <property name="enabled">
                         <bool>true</bool>
@@ -613,6 +1052,19 @@ QToolBox {
                        </property>
                       </widget>
                      </item>
+                     <item row="5" column="1">
+                      <widget class="QPushButton" name="alignSaveButton">
+                       <property name="enabled">
+                        <bool>true</bool>
+                       </property>
+                       <property name="toolTip">
+                        <string>Save alignment settings for recall later or when next run</string>
+                       </property>
+                       <property name="text">
+                        <string>Save Settings</string>
+                       </property>
+                      </widget>
+                     </item>
                     </layout>
                    </widget>
                   </item>
@@ -626,16 +1078,6 @@ QToolBox {
                  </property>
                  <property name="text">
                   <string>Reset</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="alignAutoCentreButton">
-                 <property name="toolTip">
-                  <string>Offset the model to the centre of the data points. May need to click View All afterwards.</string>
-                 </property>
-                 <property name="text">
-                  <string>Auto Centre</string>
                  </property>
                 </widget>
                </item>
@@ -660,7 +1102,7 @@ QToolBox {
                 <x>0</x>
                 <y>0</y>
                 <width>340</width>
-                <height>490</height>
+                <height>856</height>
                </rect>
               </property>
               <property name="sizePolicy">
