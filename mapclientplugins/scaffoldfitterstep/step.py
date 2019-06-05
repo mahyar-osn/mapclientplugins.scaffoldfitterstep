@@ -9,9 +9,8 @@ from PySide import QtGui
 
 from mapclient.mountpoints.workflowstep import WorkflowStepMountPoint
 from mapclientplugins.scaffoldfitterstep.configuredialog import ConfigureDialog
-from mapclientplugins.scaffoldfitterstep.model.scaffoldfittermodel import ScaffoldFitterModel
+from mapclientplugins.scaffoldfitterstep.model.master import MasterModel
 from mapclientplugins.scaffoldfitterstep.view.scaffoldfitterwidget import ScaffoldFitterWidget
-
 
 
 class ScaffoldFitterStep(WorkflowStepMountPoint):
@@ -31,11 +30,15 @@ class ScaffoldFitterStep(WorkflowStepMountPoint):
                       'http://physiomeproject.org/workflow/1.0/rdf-schema#uses',
                       'http://physiomeproject.org/workflow/1.0/rdf-schema#file_location'))
         self.addPort(('http://physiomeproject.org/workflow/1.0/rdf-schema#port',
+                      'http://physiomeproject.org/workflow/1.0/rdf-schema#uses',
+                      'generator_model'))
+        self.addPort(('http://physiomeproject.org/workflow/1.0/rdf-schema#port',
                       'http://physiomeproject.org/workflow/1.0/rdf-schema#provides',
                       'http://physiomeproject.org/workflow/1.0/rdf-schema#file_location'))
         # Port data:
-        self._pointCloudData = None # file_location: point cloud data to fit the scaffold to
-        self._fittedScaffold = None # file_location: final fitted scaffold
+        self._pointCloudData = None  # file_location: point cloud data to fit the scaffold to
+        self._meshGeneratorModel = None  # meshGeneratorModel from mapclientplugins.meshgeneratorstep
+        self._fittedScaffold = None  # file_location: final fitted scaffold
         # Config:
         self._config = {}
         self._config['identifier'] = ''
@@ -49,12 +52,10 @@ class ScaffoldFitterStep(WorkflowStepMountPoint):
         """
         # Put your execute step code here before calling the '_doneExecution' method.
         if self._view is None:
-            scaffolfittermodel = ScaffoldFitterModel()
-            self._view = ScaffoldFitterWidget(scaffolfittermodel)
+            scaffolfittermodel = MasterModel(self._meshGeneratorModel.getContext())
+            self._view = ScaffoldFitterWidget(scaffolfittermodel, self._meshGeneratorModel, self._pointCloudData)
             self._view.register_done_execution(self._doneExecution)
 
-        # scaffolfittermodel.initialise('D:\sparc\milestones\T2.5_rat-heart\data\scaffold\mesh.exf', self._pointCloudData)
-        self._view.initialise('D:\sparc\milestones\T2.5_rat-heart\data\scaffold\mesh.exf', self._pointCloudData)
         self._setCurrentWidget(self._view)
 
     def setPortData(self, index, dataIn):
@@ -66,7 +67,10 @@ class ScaffoldFitterStep(WorkflowStepMountPoint):
         :param index: Index of the port to return.
         :param dataIn: The data to set for the port at the given index.
         """
-        self._pointCloudData = dataIn # file_location
+        if index == 0:
+            self._pointCloudData = dataIn # file_location
+        elif index == 1:
+            self._meshGeneratorModel = dataIn # file_location
 
     def getPortData(self, index):
         """
