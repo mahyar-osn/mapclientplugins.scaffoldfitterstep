@@ -37,8 +37,11 @@ class MasterModel(object):
     def get_align_euler_angles(self):
         return self._scaffoldFitterModel.get_align_euler_angles()
 
-    def initialise(self, scaffold_model, point_cloud):
-        self._scaffoldFitterModel.initialise(scaffold_model, point_cloud)
+    def initialise(self, point_cloud):
+        self._scaffoldFitterModel.initialise(point_cloud)
+
+    def initialise_region(self, region):
+        self._scaffoldFitterModel.initialise_region(region)
 
     def is_align_mirror(self):
         self._scaffoldFitterModel.is_align_mirror()
