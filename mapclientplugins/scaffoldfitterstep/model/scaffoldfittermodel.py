@@ -5,8 +5,6 @@ from opencmiss.zinc.glyph import Glyph
 from opencmiss.zinc.graphics import Graphics
 from opencmiss.zinc.material import Material
 
-from opencmiss.zinc.scenefilter import Scenefilter
-from opencmiss.zinc.scenecoordinatesystem import SCENECOORDINATESYSTEM_NORMALISED_WINDOW_FIT_LEFT
 from opencmiss.zinc.status import OK as ZINC_OK
 
 from python_packages.scaffoldfitter.src.scaffoldfitter.fitter import Fitter
@@ -19,7 +17,9 @@ class ScaffoldFitterModel(object):
 
         self._context = context
         self._material_module = self._context.getMaterialmodule()
-
+        self._region = self._context.createRegion()
+        self._region.setName('fitter_region')
+        self._ScaffoldFitter = Fitter(self._region)
         self._region_initialised = False
 
         self._initialise_surface_material()
@@ -65,51 +65,34 @@ class ScaffoldFitterModel(object):
     def get_align_scale(self):
         return self._ScaffoldFitter.getAlignScale()
 
+    def get_initial_scale(self):
+        self._ScaffoldFitter.getInitialScale()
+
     def get_align_offset(self):
         return self._ScaffoldFitter.getAlignOffset()
 
     def get_align_euler_angles(self):
         return self._ScaffoldFitter.getAlignEulerAngles()
 
-    def initialise_region(self, region):
-        self._region = region
+    def initialise(self, point_cloud, scaffold_path):
+        self._reset_align_settings()
+        self._load_point_cloud(point_cloud)
+        self._load_scaffold(scaffold_path)
+        self.initialise_problem()
 
-    def initialise(self, point_cloud, region_initialised=True):
-        if region_initialised:
-            self._region_initialised = True
-            if self._ScaffoldFitter is None:
-                self._ScaffoldFitter = Fitter(self._region)
-            else:
-                self._ScaffoldFitter = None
-                self._ScaffoldFitter = Fitter(self._region)
-            self._reset_align_settings()
-            self._load_point_cloud(point_cloud)
-            self.initialise_problem()
-        else:
-            self._ScaffoldFitter = Fitter(self._region)
-            self._reset_align_settings()
-            self._load_point_cloud(point_cloud)
-            self.initialise_problem()
+    def _load_scaffold(self, scaffold):
+        self._scaffold_model = scaffold
 
     def _load_point_cloud(self, point_cloud):
         self._point_cloud = point_cloud
-        self.set_point_cloud(self._point_cloud)
 
     def initialise_problem(self):
-        if self._region_initialised:
-            self._initialise_scaffold_model(reference=True)  # once to generate a model with reference field
-            self._initialise_scaffold_model(reference=False)  # again as a target model
-            self._initialise_point_cloud()
-            self._initialise_model_centre()
-            # self._initialise_project_surface_group()
-            self._initialise_active_data_point()
-            # self._ScaffoldFitter.applyAlignSettings()
-        else:
-            self._initialise_point_cloud()
-            self._initialise_active_data_point()
-
+        self._initialise_scaffold_model(reference=True)  # once to generate a model with reference field
+        self._initialise_scaffold_model(reference=False)  # again as a target model
+        self._initialise_point_cloud()
+        self._initialise_active_data_point()
         self._initialise_scene()
-        self._show_model_graphics()
+        self._show_graphics()
 
     def is_align_mirror(self):
         return self._ScaffoldFitter.isAlignMirror()
@@ -117,17 +100,12 @@ class ScaffoldFitterModel(object):
     def set_location(self, location):
         self._location = location
 
-    def set_scaffold_model(self, scaffold_model):
-        self._scaffold_model = scaffold_model
-
-    def set_point_cloud(self, point_cloud):
-        self._point_cloud = point_cloud
-
     def set_align_settings_change_callback(self, align_settings_change_callback):
         self._ScaffoldFitter.setAlignSettingsChangeCallback(align_settings_change_callback)
 
-    def auto_centre_model_on_data(self):
+    def auto_align_model_on_data(self):
         self._model_coordinate_field = self._ScaffoldFitter.autoCentreModelOnData()
+        # self._ScaffoldFitter.initializeRigidAlignment()
         self._set_model_graphics_post_align()
 
     def rigid_align(self):
@@ -200,7 +178,7 @@ class ScaffoldFitterModel(object):
         self._tessellationmodule.setRefinementFactors([res])
 
     def _initialise_reference_model_coordinate(self):
-        self._model_reference_coordinate_field = self._ScaffoldFitter.modelReferenceCoordinateField = self._ScaffoldFitter.getModelCoordinateField()
+        self._model_reference_coordinate_field = self._ScaffoldFitter.getModelCoordinateField(reference=True)
         name = self._model_reference_coordinate_field.getName()
         number = 0
         number_string = ''
@@ -213,6 +191,9 @@ class ScaffoldFitterModel(object):
 
     def _initialise_scaffold_model(self, reference=True):
         if reference:
+            result = self._region.readFile(self._scaffold_model)
+            if result != ZINC_OK:
+                raise ValueError('Failed to initiate scaffold')
             if self._model_reference_coordinate_field is not None:
                 self._model_reference_coordinate_field = None
                 self._initialise_reference_model_coordinate()
@@ -221,7 +202,9 @@ class ScaffoldFitterModel(object):
         else:
             if self._model_coordinate_field is not None:
                 self._model_coordinate_field = None
-                self._model_coordinate_field = self._ScaffoldFitter.modelCoordinateField = self._ScaffoldFitter.getModelCoordinateField()
+                self._model_coordinate_field = self._ScaffoldFitter.getModelCoordinateField(reference=reference)
+            else:
+                self._model_coordinate_field = self._ScaffoldFitter.getModelCoordinateField(reference=reference)
 
     def _initialise_point_cloud(self):
         sir = self._region.createStreaminformationRegion()
@@ -232,9 +215,6 @@ class ScaffoldFitterModel(object):
             raise ValueError('Failed to read point cloud')
         self._data_coordinate_field = self._ScaffoldFitter._dataCoordinateField = self._ScaffoldFitter.getDataCoordinateField()
         self._project_surface_group, self._project_surface_element_group = self._ScaffoldFitter.getProjectSurfaceGroup()
-
-    def _initialise_model_centre(self):
-        self._model_centre = self._ScaffoldFitter.getModelCentre()
 
     def _initialise_active_data_point(self):
         fm = self._region.getFieldmodule()
@@ -249,12 +229,11 @@ class ScaffoldFitterModel(object):
     def _reset_align_settings(self):
         self._ScaffoldFitter.resetAlignSettings()
 
-    def _show_model_graphics(self):
+    def _show_graphics(self):
         self._scene.beginChange()
-        if self._region_initialised:
-            self._create_line_graphics()
-            self._create_surface_graphics()
         self._create_data_point_graphics()
+        self._create_line_graphics()
+        self._create_surface_graphics()
         self._scene.endChange()
 
     def _set_model_graphics_post_align(self):
@@ -263,3 +242,13 @@ class ScaffoldFitterModel(object):
             graphics = self._scene.findGraphicsByName(name)
             graphics.setCoordinateField(self._model_coordinate_field)
         self._scene.endChange()
+
+    def _set_explicit_model_graphics(self, field):
+        self._scene.beginChange()
+        for name in ['display_lines', 'display_surface']:
+            graphics = self._scene.findGraphicsByName(name)
+            graphics.setCoordinateField(field)
+        self._scene.endChange()
+
+    def swap_axes(self, axes=None):
+        self._ScaffoldFitter.swap_axes(axes=axes)
