@@ -31,13 +31,13 @@ class ScaffoldFitterStep(WorkflowStepMountPoint):
                       'http://physiomeproject.org/workflow/1.0/rdf-schema#file_location'))
         self.addPort(('http://physiomeproject.org/workflow/1.0/rdf-schema#port',
                       'http://physiomeproject.org/workflow/1.0/rdf-schema#uses',
-                      'generator_model'))
+                      'params'))
         self.addPort(('http://physiomeproject.org/workflow/1.0/rdf-schema#port',
                       'http://physiomeproject.org/workflow/1.0/rdf-schema#provides',
                       'http://physiomeproject.org/workflow/1.0/rdf-schema#file_location'))
         # Port data:
         self._pointCloudData = None  # file_location: point cloud data to fit the scaffold to
-        self._meshGeneratorModel = None  # meshGeneratorModel from mapclientplugins.meshgeneratorstep
+        self._scaffoldParams = None  # meshGeneratorModel from mapclientplugins.meshgeneratorstep
         self._fittedScaffold = None  # file_location: final fitted scaffold
         # Config:
         self._config = {}
@@ -52,8 +52,11 @@ class ScaffoldFitterStep(WorkflowStepMountPoint):
         """
         # Put your execute step code here before calling the '_doneExecution' method.
         if self._view is None:
-            scaffolfittermodel = MasterModel(self._meshGeneratorModel.getContext())
-            self._view = ScaffoldFitterWidget(scaffolfittermodel, self._meshGeneratorModel, self._pointCloudData)
+            context = 'Fitting'
+            scaffolfittermodel = MasterModel(context)
+            self._view = ScaffoldFitterWidget(scaffolfittermodel, self._scaffoldParams[0],
+                                              self._scaffoldParams[1], self._scaffoldParams[2], self._scaffoldParams[3],
+                                              self._pointCloudData)
             self._view.register_done_execution(self._doneExecution)
 
         self._setCurrentWidget(self._view)
@@ -70,7 +73,7 @@ class ScaffoldFitterStep(WorkflowStepMountPoint):
         if index == 0:
             self._pointCloudData = dataIn # file_location
         elif index == 1:
-            self._meshGeneratorModel = dataIn # file_location
+            self._scaffoldParams = dataIn # file_location
 
     def getPortData(self, index):
         """
