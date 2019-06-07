@@ -56,7 +56,7 @@ class ScaffoldFitterStep(WorkflowStepMountPoint):
             scaffolfittermodel = MasterModel(context)
             self._view = ScaffoldFitterWidget(scaffolfittermodel, self._scaffoldParams[0],
                                               self._scaffoldParams[1], self._scaffoldParams[2], self._scaffoldParams[3],
-                                              self._pointCloudData)
+                                              self._scaffoldParams[4], self._pointCloudData)
             self._view.register_done_execution(self._doneExecution)
 
         self._setCurrentWidget(self._view)
