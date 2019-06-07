@@ -660,7 +660,7 @@ class Ui_ScaffoldfitterWidget(object):
         self.dockWidget.setWindowTitle(QtGui.QApplication.translate("ScaffoldfitterWidget", "Fitting Steps", None, QtGui.QApplication.UnicodeUTF8))
         self.meshType_label.setText(QtGui.QApplication.translate("ScaffoldfitterWidget", "Scaffold type:", None, QtGui.QApplication.UnicodeUTF8))
         self.parameterSet_label.setText(QtGui.QApplication.translate("ScaffoldfitterWidget", "Scaffold species", None, QtGui.QApplication.UnicodeUTF8))
-        self.toolBox.setItemText(self.toolBox.indexOf(self.Scaffoldpage), QtGui.QApplication.translate("ScaffoldfitterWidget", "Scaffold Parametrs", None, QtGui.QApplication.UnicodeUTF8))
+        self.toolBox.setItemText(self.toolBox.indexOf(self.Scaffoldpage), QtGui.QApplication.translate("ScaffoldfitterWidget", "Scaffold Parameters", None, QtGui.QApplication.UnicodeUTF8))
         self.alignSettingsGroupBox.setTitle(QtGui.QApplication.translate("ScaffoldfitterWidget", "Alignment", None, QtGui.QApplication.UnicodeUTF8))
         self.axesSwap_label.setText(QtGui.QApplication.translate("ScaffoldfitterWidget", "Swap scaffold axes:", None, QtGui.QApplication.UnicodeUTF8))
         self.yz_radioButton.setText(QtGui.QApplication.translate("ScaffoldfitterWidget", "Y-Z", None, QtGui.QApplication.UnicodeUTF8))
