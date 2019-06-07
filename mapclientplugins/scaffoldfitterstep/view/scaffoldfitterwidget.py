@@ -12,7 +12,8 @@ from opencmiss.zincwidgets.basesceneviewerwidget import BaseSceneviewerWidget
 
 class ScaffoldFitterWidget(QtGui.QWidget):
 
-    def __init__(self, model, scaffold_path, scaffold_name, scaffold_params, scaffold_object, point_cloud, parent=None):
+    def __init__(self, model, scaffold_path, scaffold_name, scaffold_species, scaffold_params, scaffold_object,
+                 point_cloud, parent=None):
         super(ScaffoldFitterWidget, self).__init__(parent)
         self._model = model
 
@@ -22,6 +23,7 @@ class ScaffoldFitterWidget(QtGui.QWidget):
 
         self._scaffold_path = scaffold_path
         self._scaffold_name = scaffold_name
+        self._scaffold_species = scaffold_species
         self._scaffold_params = scaffold_params
         self._scaffold_object = scaffold_object
 
@@ -55,6 +57,7 @@ class ScaffoldFitterWidget(QtGui.QWidget):
 
         # scaffold page connections
         self._ui.meshType_label.setText(self._scaffold_name)
+        self._ui.parameterSet_label.setText(self._scaffold_species)
         self._ui.displayAnnotationPoints_checkBox.clicked.connect(self._display_annotation_points_clicked)
         self._ui.displayAxes_checkBox.clicked.connect(self._display_axes_clicked)
         self._ui.displayElementAxes_checkBox.clicked.connect(self._display_element_axes_clicked)
