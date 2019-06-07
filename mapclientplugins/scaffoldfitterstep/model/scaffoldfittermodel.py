@@ -7,7 +7,7 @@ from opencmiss.zinc.material import Material
 
 from opencmiss.zinc.status import OK as ZINC_OK
 
-from python_packages.scaffoldfitter.src.scaffoldfitter.fitter import Fitter
+from scaffoldfitter.fitter import Fitter
 
 
 class ScaffoldFitterModel(object):
