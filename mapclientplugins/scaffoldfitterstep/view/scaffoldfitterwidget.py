@@ -84,6 +84,10 @@ class ScaffoldFitterWidget(QtGui.QWidget):
         self._ui.alignAutoCentreButton.clicked.connect(self._auto_align_button_clicked)
         self._ui.alignResetButton.clicked.connect(self._reset_clicked)
 
+        # Smooth fitting page connections
+        self._ui.projectPointsButton.clicked.connect(self._project_clicked)
+        self._ui.fitPerformButton.clicked.connect(self._fit_clicked)
+
     def _done_clicked(self):
         self._done_callback()
 
@@ -263,7 +267,7 @@ class ScaffoldFitterWidget(QtGui.QWidget):
         self._generator_model.setDisplayAnnotationPoints(self._ui.displayAnnotationPoints_checkBox.isChecked())
 
     def _display_axes_clicked(self):
-        self._generator_model.setDisplayAxes(self._ui.displayAxes_checkBox.isChecked())
+        self._model.show_axes('display_axes', self._ui.displayAxes_checkBox.isChecked())
 
     def _display_element_axes_clicked(self):
         self._generator_model.setDisplayElementAxes(self._ui.displayElementAxes_checkBox.isChecked())
@@ -322,10 +326,17 @@ class ScaffoldFitterWidget(QtGui.QWidget):
     def _display_surfaces_wireframe_clicked(self):
         self._generator_model.setDisplaySurfacesWireframe(self._ui.displaySurfacesWireframe_checkBox.isChecked())
 
-    def _annotation_item_changed(self, item):
+    @staticmethod
+    def _annotation_item_changed(item):
         print(item.text(0))
         print(item.data(0, QtCore.Qt.UserRole + 1))
 
     def _view_all(self):
         if self._ui.sceneviewerWidget.get_zinc_sceneviewer() is not None:
             self._ui.sceneviewerWidget.view_all()
+
+    def _project_clicked(self):
+        self._model.project_data()
+
+    def _fit_clicked(self):
+        self._model.fit_scaffold()
