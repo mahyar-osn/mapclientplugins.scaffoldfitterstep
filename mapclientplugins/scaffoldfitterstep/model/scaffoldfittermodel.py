@@ -22,6 +22,24 @@ class ScaffoldFitterModel(object):
         self._ScaffoldFitter = Fitter(self._region)
         self._region_initialised = False
 
+        self._node_derivative_labels = ['D1', 'D2', 'D3', 'D12', 'D13', 'D23', 'D123']
+        self._settings = {
+            'display_node_points': False,
+            'display_node_numbers': False,
+            'display_node_derivatives': False,
+            'display_node_derivative_labels': self._node_derivative_labels[0:3],
+            'display_lines': True,
+            'display_lines_exterior': False,
+            'display_surfaces': True,
+            'display_surfaces_exterior': True,
+            'display_surfaces_translucent': True,
+            'display_surfaces_wireframe': False,
+            'display_element_numbers': False,
+            'display_element_axes': False,
+            'display_axes': True,
+            'display_annotation_points': False
+        }
+
         self._initialise_surface_material()
         self._initialise_glyph_material()
         self._initialise_tessellation(12)
@@ -74,6 +92,9 @@ class ScaffoldFitterModel(object):
     def get_align_euler_angles(self):
         return self._ScaffoldFitter.getAlignEulerAngles()
 
+    def _get_visibility(self, graphics_name):
+        return self._settings[graphics_name]
+
     def initialise(self, point_cloud, scaffold_path):
         self._reset_align_settings()
         self._load_point_cloud(point_cloud)
@@ -97,6 +118,11 @@ class ScaffoldFitterModel(object):
     def is_align_mirror(self):
         return self._ScaffoldFitter.isAlignMirror()
 
+    def set_visibility(self, graphics_name, show):
+        self._settings[graphics_name] = show
+        graphics = self._region.getScene().findGraphicsByName(graphics_name)
+        graphics.setVisibilityFlag(show)
+
     def set_location(self, location):
         self._location = location
 
@@ -109,7 +135,7 @@ class ScaffoldFitterModel(object):
         self._set_model_graphics_post_align()
 
     def rigid_align(self):
-        _ = self._ScaffoldFitter.initialiseRigidAlignment()
+        _ = self._ScaffoldFitter.initializeRigidAlignment()
         self._model_coordinate_field = self._ScaffoldFitter.setStatePostAlign()
 
     def _create_line_graphics(self):
@@ -165,7 +191,6 @@ class ScaffoldFitterModel(object):
         self._solidTissue.setAttributeReal3(Material.ATTRIBUTE_SPECULAR, [0.2, 0.2, 0.3])
         self._solidTissue.setAttributeReal(Material.ATTRIBUTE_ALPHA, 0.5)
         self._solidTissue.setAttributeReal(Material.ATTRIBUTE_SHININESS, 0.6)
-
         self._materialmodule.endChange()
 
     def _initialise_glyph_material(self):
@@ -176,6 +201,31 @@ class ScaffoldFitterModel(object):
         self._tessellationmodule = self._context.getTessellationmodule()
         self._tessellationmodule = self._tessellationmodule.getDefaultTessellation()
         self._tessellationmodule.setRefinementFactors([res])
+
+    def _initialise_model_axis(self):
+        axes_scale = 10000
+        axes = self._scene.createGraphicsPoints()
+        pointattr = axes.getGraphicspointattributes()
+        pointattr.setGlyphShapeType(Glyph.SHAPE_TYPE_AXES_XYZ)
+        pointattr.setBaseSize([axes_scale, axes_scale, axes_scale])
+        axes.setMaterial(self._materialmodule.findMaterialByName('red'))
+        axes.setName('display_axes')
+        axes.setVisibilityFlag(self.is_display_axes())
+
+    def _get_node_coordinates_range(self, coordinates):
+        fm = coordinates.getFieldmodule()
+        fm.beginChange()
+        nodes = fm.findNodesetByFieldDomainType(Field.DOMAIN_TYPE_NODES)
+        min_coordinates = fm.createFieldNodesetMinimum(coordinates, nodes)
+        max_coordinates = fm.createFieldNodesetMaximum(coordinates, nodes)
+        componentsCount = coordinates.getNumberOfComponents()
+        cache = fm.createFieldcache()
+        result, minX = min_coordinates.evaluateReal(cache, componentsCount)
+        result, maxX = max_coordinates.evaluateReal(cache, componentsCount)
+        min_coordinates = max_coordinates = None
+        cache = None
+        fm.endChange()
+        return minX, maxX
 
     def _initialise_reference_model_coordinate(self):
         self._model_reference_coordinate_field = self._ScaffoldFitter.getModelCoordinateField(reference=True)
@@ -213,8 +263,9 @@ class ScaffoldFitterModel(object):
         result = self._region.read(sir)
         if result != ZINC_OK:
             raise ValueError('Failed to read point cloud')
-        self._data_coordinate_field = self._ScaffoldFitter._dataCoordinateField = self._ScaffoldFitter.getDataCoordinateField()
-        self._project_surface_group, self._project_surface_element_group = self._ScaffoldFitter.getProjectSurfaceGroup()
+        self._data_coordinate_field = self._ScaffoldFitter._dataCoordinateField = \
+            self._ScaffoldFitter.getDataCoordinateField()
+        # self._project_surface_group, self._project_surface_element_group = self._ScaffoldFitter.getProjectSurfaceGroup()
 
     def _initialise_active_data_point(self):
         fm = self._region.getFieldmodule()
@@ -226,6 +277,9 @@ class ScaffoldFitterModel(object):
     def _initialise_scene(self):
         self._scene = self._region.getScene()
 
+    def is_display_axes(self):
+        return self._get_visibility('display_axes')
+
     def _reset_align_settings(self):
         self._ScaffoldFitter.resetAlignSettings()
 
@@ -234,6 +288,8 @@ class ScaffoldFitterModel(object):
         self._create_data_point_graphics()
         self._create_line_graphics()
         self._create_surface_graphics()
+
+        self._initialise_model_axis()
         self._scene.endChange()
 
     def _set_model_graphics_post_align(self):
@@ -252,3 +308,9 @@ class ScaffoldFitterModel(object):
 
     def swap_axes(self, axes=None):
         self._ScaffoldFitter.swap_axes(axes=axes)
+
+    def project_data(self):
+        self._ScaffoldFitter.computeProjection()
+
+    def fit_data(self):
+        self._ScaffoldFitter.fit()
