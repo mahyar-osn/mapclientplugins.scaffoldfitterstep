@@ -10,6 +10,9 @@ class MasterModel(object):
         self._context = Context(context)
         self._scaffoldFitterModel = ScaffoldFitterModel(self._context)
 
+    def auto_align_model_on_data(self):
+        self._scaffoldFitterModel.auto_align_model_on_data()
+
     def get_context(self):
         return self._context
 
@@ -43,14 +46,20 @@ class MasterModel(object):
     def initialise(self, point_cloud, scaffold_path):
         self._scaffoldFitterModel.initialise(point_cloud, scaffold_path)
 
-    def swap_yz(self):
-        self._scaffoldFitterModel.swap_axes(axes='yz')
-
-    def auto_align_model_on_data(self):
-        self._scaffoldFitterModel.auto_align_model_on_data()
-
     def is_align_mirror(self):
         self._scaffoldFitterModel.is_align_mirror()
 
     def set_align_settings_change_callback(self, align_settings_change_callback):
         self._scaffoldFitterModel.set_align_settings_change_callback(align_settings_change_callback)
+
+    def swap_yz(self):
+        self._scaffoldFitterModel.swap_axes(axes='yz')
+
+    def show_axes(self, graphics, show):
+        self._scaffoldFitterModel.set_visibility(graphics, show)
+
+    def project_data(self):
+        self._scaffoldFitterModel.project_data()
+
+    def fit_scaffold(self):
+        self._scaffoldFitterModel.fit_data()
