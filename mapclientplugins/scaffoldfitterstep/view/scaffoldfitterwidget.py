@@ -165,7 +165,7 @@ class ScaffoldFitterWidget(QtGui.QWidget):
         self._shareable_widget.set_context(context)
 
     def _align_settings_display(self):
-        self._display_real(self._ui.alignScaleLineEdit, self._model.get_align_scale())
+        self._display_vector(self._ui.alignScaleLineEdit, self._model.get_align_scale())
         self._display_vector(self._ui.alignRotationLineEdit, self._model.get_align_euler_angles())
         self._display_vector(self._ui.alignOffsetLineEdit, self._model.get_align_offset())
         self._ui.alignMirrorCheckBox.setCheckState(
