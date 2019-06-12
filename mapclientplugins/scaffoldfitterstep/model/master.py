@@ -55,8 +55,17 @@ class MasterModel(object):
     def swap_yz(self):
         self._scaffoldFitterModel.swap_axes(axes='yz')
 
-    def show_axes(self, graphics, show):
-        self._scaffoldFitterModel.set_visibility(graphics, show)
+    def show_axes(self, show):
+        self._scaffoldFitterModel.set_visibility('display_axes', show)
+
+    def show_surface(self, show):
+        self._scaffoldFitterModel.set_visibility('display_surfaces', show)
+
+    def show_surface_translucent(self, show):
+        self._scaffoldFitterModel.set_visibility('display_surfaces_translucent', show)
+
+    def perturb_lines(self):
+        self._scaffoldFitterModel.perturb_lines()
 
     def project_data(self):
         self._scaffoldFitterModel.project_data()
