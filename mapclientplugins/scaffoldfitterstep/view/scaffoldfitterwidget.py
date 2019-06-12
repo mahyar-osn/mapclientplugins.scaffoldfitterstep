@@ -112,7 +112,7 @@ class ScaffoldFitterWidget(QtGui.QWidget):
     def _auto_perturb_lines(self):
         sceneviewer = self._ui.sceneviewerWidget.get_zinc_sceneviewer()
         if sceneviewer is not None:
-            sceneviewer.setPerturbLinesFlag(self._generator_model.needPerturbLines())
+            sceneviewer.setPerturbLinesFlag(self._model.perturb_lines())
 
     def _scene_changed(self):
         sceneviewer = self._ui.sceneviewerWidget.get_zinc_sceneviewer()
@@ -267,7 +267,7 @@ class ScaffoldFitterWidget(QtGui.QWidget):
         self._generator_model.setDisplayAnnotationPoints(self._ui.displayAnnotationPoints_checkBox.isChecked())
 
     def _display_axes_clicked(self):
-        self._model.show_axes('display_axes', self._ui.displayAxes_checkBox.isChecked())
+        self._model.show_axes(self._ui.displayAxes_checkBox.isChecked())
 
     def _display_element_axes_clicked(self):
         self._generator_model.setDisplayElementAxes(self._ui.displayElementAxes_checkBox.isChecked())
@@ -313,15 +313,15 @@ class ScaffoldFitterWidget(QtGui.QWidget):
         self._generator_model.setDisplayNodePoints(self._ui.displayNodePoints_checkBox.isChecked())
 
     def _display_surfaces_clicked(self):
-        self._generator_model.setDisplaySurfaces(self._ui.displaySurfaces_checkBox.isChecked())
-        self._auto_perturb_lines()
+        self._model.show_surface(self._ui.displaySurfaces_checkBox.isChecked())
+        # self._auto_perturb_lines()
 
     def _display_surfaces_exterior_clicked(self):
         self._generator_model.setDisplaySurfacesExterior(self._ui.displaySurfacesExterior_checkBox.isChecked())
 
     def _display_surfaces_translucent_clicked(self):
-        self._generator_model.setDisplaySurfacesTranslucent(self._ui.displaySurfacesTranslucent_checkBox.isChecked())
-        self._auto_perturb_lines()
+        self._model.show_surface_translucent(self._ui.displaySurfacesTranslucent_checkBox.isChecked())
+        # self._auto_perturb_lines()
 
     def _display_surfaces_wireframe_clicked(self):
         self._generator_model.setDisplaySurfacesWireframe(self._ui.displaySurfacesWireframe_checkBox.isChecked())
