@@ -1,6 +1,4 @@
-import sys
-
-from opencmiss.zinc.field import Field, FieldFindMeshLocation
+from opencmiss.zinc.field import Field
 from opencmiss.zinc.glyph import Glyph
 from opencmiss.zinc.graphics import Graphics
 from opencmiss.zinc.material import Material
@@ -13,38 +11,6 @@ from scaffoldfitter.fitter import Fitter
 class ScaffoldFitterModel(object):
 
     def __init__(self, context):
-        self._clear_all()
-
-        self._context = context
-        self._material_module = self._context.getMaterialmodule()
-        self._region = self._context.createRegion()
-        self._region.setName('fitter_region')
-        self._ScaffoldFitter = Fitter(self._region)
-        self._region_initialised = False
-
-        self._node_derivative_labels = ['D1', 'D2', 'D3', 'D12', 'D13', 'D23', 'D123']
-        self._settings = {
-            'display_node_points': False,
-            'display_node_numbers': False,
-            'display_node_derivatives': False,
-            'display_node_derivative_labels': self._node_derivative_labels[0:3],
-            'display_lines': True,
-            'display_lines_exterior': False,
-            'display_surfaces': True,
-            'display_surfaces_exterior': True,
-            'display_surfaces_translucent': True,
-            'display_surfaces_wireframe': False,
-            'display_element_numbers': False,
-            'display_element_axes': False,
-            'display_axes': True,
-            'display_annotation_points': False
-        }
-
-        self._initialise_surface_material()
-        self._initialise_glyph_material()
-        self._initialise_tessellation(12)
-
-    def _clear_all(self):
         self._ScaffoldFitter = None
         self._context = None
         self._region = None
@@ -61,6 +27,35 @@ class ScaffoldFitterModel(object):
         self._project_surface_element_group = None
         self._active_data_point_group_field = None
         self._scene = None
+
+        self._context = context
+        self._material_module = self._context.getMaterialmodule()
+        self._region = self._context.createRegion()
+        self._region.setName('fitter_region')
+        self._ScaffoldFitter = Fitter(self._region, self._context)
+        self._region_initialised = False
+
+        self._node_derivative_labels = ['D1', 'D2', 'D3', 'D12', 'D13', 'D23', 'D123']
+        self._settings = {
+            'display_node_points': False,
+            'display_node_numbers': False,
+            'display_node_derivatives': False,
+            'display_node_derivative_labels': self._node_derivative_labels[0:3],
+            'display_lines': True,
+            'display_lines_exterior': False,
+            'display_surfaces': True,
+            'display_surfaces_exterior': True,
+            'display_surfaces_translucent': False,
+            'display_surfaces_wireframe': False,
+            'display_element_numbers': False,
+            'display_element_axes': False,
+            'display_axes': True,
+            'display_annotation_points': False
+        }
+
+        self._initialise_surface_material()
+        self._initialise_glyph_material()
+        self._initialise_tessellation(12)
 
     def get_context(self):
         return self._context
@@ -109,7 +104,7 @@ class ScaffoldFitterModel(object):
 
     def initialise_problem(self):
         self._initialise_scaffold_model(reference=True)  # once to generate a model with reference field
-        self._initialise_scaffold_model(reference=False)  # again as a target model
+        # self._initialise_scaffold_model(reference=False)  # again as a target model
         self._initialise_point_cloud()
         self._initialise_active_data_point()
         self._initialise_scene()
@@ -153,9 +148,17 @@ class ScaffoldFitterModel(object):
         surface.setRenderPolygonMode(Graphics.RENDER_POLYGON_MODE_SHADED)
         surface_material = self._materialmodule.findMaterialByName('heart_tissue')
         surface.setMaterial(surface_material)
-        surface.setName('display_surface')
-        # surface.setVisibilityFlag(self.is_display_surface('display_surface'))
+        surface.setName('display_surfaces')
         return surface
+
+    def _create_surface_trans_graphics(self):
+        surface_trans = self._scene.createGraphicsSurfaces()
+        surface_trans.setCoordinateField(self._model_reference_coordinate_field)
+        surface_trans.setRenderPolygonMode(Graphics.RENDER_POLYGON_MODE_SHADED)
+        surface_material = self._materialmodule.findMaterialByName('heart_tissue_trans')
+        surface_trans.setMaterial(surface_material)
+        surface_trans.setName('display_surfaces_translucent')
+        return surface_trans
 
     def _create_data_point_graphics(self):
         points = self._scene.createGraphicsPoints()
@@ -167,30 +170,51 @@ class ScaffoldFitterModel(object):
         point_attr.setBaseSize(point_size)
         points.setMaterial(self._materialmodule.findMaterialByName('silver'))
 
+    def _create_axis_graphics(self):
+        axes_scale = 10000
+        axes = self._scene.createGraphicsPoints()
+        pointattr = axes.getGraphicspointattributes()
+        pointattr.setGlyphShapeType(Glyph.SHAPE_TYPE_AXES_XYZ)
+        pointattr.setBaseSize([axes_scale, axes_scale, axes_scale])
+        axes.setMaterial(self._materialmodule.findMaterialByName('red'))
+        axes.setName('display_axes')
+        axes.setVisibilityFlag(self.is_display_axes())
+
+    @staticmethod
+    def _get_node_coordinates_range(coordinates):
+        fm = coordinates.getFieldmodule()
+        fm.beginChange()
+        nodes = fm.findNodesetByFieldDomainType(Field.DOMAIN_TYPE_NODES)
+        min_coordinates = fm.createFieldNodesetMinimum(coordinates, nodes)
+        max_coordinates = fm.createFieldNodesetMaximum(coordinates, nodes)
+        components_count = coordinates.getNumberOfComponents()
+        cache = fm.createFieldcache()
+        result, min_x = min_coordinates.evaluateReal(cache, components_count)
+        result, max_x = max_coordinates.evaluateReal(cache, components_count)
+        fm.endChange()
+        return min_x, max_x
+
     def _initialise_surface_material(self):
         self._materialmodule = self._context.getMaterialmodule()
         self._materialmodule.beginChange()
         self._materialmodule.defineStandardMaterials()
-        # self._shareable_widget = image_context_data.get_shareable_open_gl_widget()
+        solid_tissue = self._materialmodule.createMaterial()
+        solid_tissue.setName('heart_tissue')
+        solid_tissue.setManaged(True)
+        solid_tissue.setAttributeReal3(Material.ATTRIBUTE_AMBIENT, [0.913, 0.541, 0.33])
+        solid_tissue.setAttributeReal3(Material.ATTRIBUTE_EMISSION, [0.0, 0.0, 0.0])
+        solid_tissue.setAttributeReal3(Material.ATTRIBUTE_SPECULAR, [0.2, 0.2, 0.3])
+        solid_tissue.setAttributeReal(Material.ATTRIBUTE_ALPHA, 1.0)
+        solid_tissue.setAttributeReal(Material.ATTRIBUTE_SHININESS, 0.6)
 
-        # default tissue color:
-        self._surfaceMaterial = self._materialmodule.createMaterial()
-        self._surfaceMaterial.setName('default_surface')
-        self._surfaceMaterial.setManaged(True)
-        self._surfaceMaterial.setAttributeReal3(Material.ATTRIBUTE_AMBIENT, [0.7, 0.7, 1.0])
-        self._surfaceMaterial.setAttributeReal3(Material.ATTRIBUTE_DIFFUSE, [0.7, 0.7, 1.0])
-        self._surfaceMaterial.setAttributeReal3(Material.ATTRIBUTE_SPECULAR, [0.5, 0.5, 0.5])
-        self._surfaceMaterial.setAttributeReal(Material.ATTRIBUTE_ALPHA, 0.5)
-        self._surfaceMaterial.setAttributeReal(Material.ATTRIBUTE_SHININESS, 0.3)
-
-        self._solidTissue = self._materialmodule.createMaterial()
-        self._solidTissue.setName('heart_tissue')
-        self._solidTissue.setManaged(True)
-        self._solidTissue.setAttributeReal3(Material.ATTRIBUTE_AMBIENT, [0.913, 0.541, 0.33])
-        self._solidTissue.setAttributeReal3(Material.ATTRIBUTE_EMISSION, [0.0, 0.0, 0.0])
-        self._solidTissue.setAttributeReal3(Material.ATTRIBUTE_SPECULAR, [0.2, 0.2, 0.3])
-        self._solidTissue.setAttributeReal(Material.ATTRIBUTE_ALPHA, 0.5)
-        self._solidTissue.setAttributeReal(Material.ATTRIBUTE_SHININESS, 0.6)
+        solid_tissue_trnaslucent = self._materialmodule.createMaterial()
+        solid_tissue_trnaslucent.setName('heart_tissue_trans')
+        solid_tissue_trnaslucent.setManaged(True)
+        solid_tissue_trnaslucent.setAttributeReal3(Material.ATTRIBUTE_AMBIENT, [0.913, 0.541, 0.33])
+        solid_tissue_trnaslucent.setAttributeReal3(Material.ATTRIBUTE_EMISSION, [0.0, 0.0, 0.0])
+        solid_tissue_trnaslucent.setAttributeReal3(Material.ATTRIBUTE_SPECULAR, [0.2, 0.2, 0.3])
+        solid_tissue_trnaslucent.setAttributeReal(Material.ATTRIBUTE_ALPHA, 0.5)
+        solid_tissue_trnaslucent.setAttributeReal(Material.ATTRIBUTE_SHININESS, 0.6)
         self._materialmodule.endChange()
 
     def _initialise_glyph_material(self):
@@ -202,42 +226,18 @@ class ScaffoldFitterModel(object):
         self._tessellationmodule = self._tessellationmodule.getDefaultTessellation()
         self._tessellationmodule.setRefinementFactors([res])
 
-    def _initialise_model_axis(self):
-        axes_scale = 10000
-        axes = self._scene.createGraphicsPoints()
-        pointattr = axes.getGraphicspointattributes()
-        pointattr.setGlyphShapeType(Glyph.SHAPE_TYPE_AXES_XYZ)
-        pointattr.setBaseSize([axes_scale, axes_scale, axes_scale])
-        axes.setMaterial(self._materialmodule.findMaterialByName('red'))
-        axes.setName('display_axes')
-        axes.setVisibilityFlag(self.is_display_axes())
-
-    def _get_node_coordinates_range(self, coordinates):
-        fm = coordinates.getFieldmodule()
-        fm.beginChange()
-        nodes = fm.findNodesetByFieldDomainType(Field.DOMAIN_TYPE_NODES)
-        min_coordinates = fm.createFieldNodesetMinimum(coordinates, nodes)
-        max_coordinates = fm.createFieldNodesetMaximum(coordinates, nodes)
-        componentsCount = coordinates.getNumberOfComponents()
-        cache = fm.createFieldcache()
-        result, minX = min_coordinates.evaluateReal(cache, componentsCount)
-        result, maxX = max_coordinates.evaluateReal(cache, componentsCount)
-        min_coordinates = max_coordinates = None
-        cache = None
-        fm.endChange()
-        return minX, maxX
-
     def _initialise_reference_model_coordinate(self):
         self._model_reference_coordinate_field = self._ScaffoldFitter.getModelCoordinateField(reference=True)
         name = self._model_reference_coordinate_field.getName()
         number = 0
         number_string = ''
-        while True:
-            result = self._model_reference_coordinate_field.setName('reference_' + name + number_string)
-            if result == ZINC_OK:
-                break
-            number = number + 1
-            number_string = str(number)
+        # while True:
+        #     result = self._model_reference_coordinate_field.setName('reference_' + name + number_string)
+        #     result = self._model_reference_coordinate_field.setName('coordinates')
+        #     if result == ZINC_OK:
+        #         break
+        #     number = number + 1
+        #     number_string = str(number)
 
     def _initialise_scaffold_model(self, reference=True):
         if reference:
@@ -263,9 +263,7 @@ class ScaffoldFitterModel(object):
         result = self._region.read(sir)
         if result != ZINC_OK:
             raise ValueError('Failed to read point cloud')
-        self._data_coordinate_field = self._ScaffoldFitter._dataCoordinateField = \
-            self._ScaffoldFitter.getDataCoordinateField()
-        # self._project_surface_group, self._project_surface_element_group = self._ScaffoldFitter.getProjectSurfaceGroup()
+        self._data_coordinate_field = self._ScaffoldFitter.getDataCoordinateField()
 
     def _initialise_active_data_point(self):
         fm = self._region.getFieldmodule()
@@ -277,8 +275,17 @@ class ScaffoldFitterModel(object):
     def _initialise_scene(self):
         self._scene = self._region.getScene()
 
+    def is_display_lines(self):
+        return self._get_visibility('display_lines')
+
     def is_display_axes(self):
         return self._get_visibility('display_axes')
+
+    def is_display_surfaces(self):
+        return self._get_visibility('display_surfaces')
+
+    def is_display_surfaces_translucent(self):
+        return self._settings['display_surfaces_translucent']
 
     def _reset_align_settings(self):
         self._ScaffoldFitter.resetAlignSettings()
@@ -288,29 +295,37 @@ class ScaffoldFitterModel(object):
         self._create_data_point_graphics()
         self._create_line_graphics()
         self._create_surface_graphics()
-
-        self._initialise_model_axis()
+        self._create_surface_trans_graphics()
+        self._create_axis_graphics()
         self._scene.endChange()
 
     def _set_model_graphics_post_align(self):
         self._scene.beginChange()
-        for name in ['display_lines', 'display_surface']:
+        for name in ['display_lines', 'display_surfaces']:
             graphics = self._scene.findGraphicsByName(name)
             graphics.setCoordinateField(self._model_coordinate_field)
         self._scene.endChange()
 
     def _set_explicit_model_graphics(self, field):
         self._scene.beginChange()
-        for name in ['display_lines', 'display_surface']:
+        for name in ['display_lines', 'display_surfaces']:
             graphics = self._scene.findGraphicsByName(name)
             graphics.setCoordinateField(field)
         self._scene.endChange()
 
     def swap_axes(self, axes=None):
-        self._ScaffoldFitter.swap_axes(axes=axes)
+        self._ScaffoldFitter.swapAxes(axes=axes)
 
     def project_data(self):
         self._ScaffoldFitter.computeProjection()
 
     def fit_data(self):
         self._ScaffoldFitter.fit()
+
+    def perturb_lines(self):
+        if self._region is None:
+            return False
+        mesh2d = self._region.getFieldmodule().findMeshByDimension(2)
+        if mesh2d.getSize() == 0:
+            return False
+        return self.is_display_lines() and self.is_display_surfaces() and not self.is_display_surfaces_translucent()
