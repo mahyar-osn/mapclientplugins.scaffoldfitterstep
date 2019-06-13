@@ -104,7 +104,7 @@ class ScaffoldFitterModel(object):
 
     def initialise_problem(self):
         self._initialise_scaffold_model(reference=True)  # once to generate a model with reference field
-        # self._initialise_scaffold_model(reference=False)  # again as a target model
+        self._initialise_scaffold_model(reference=False)  # again as a target model
         self._initialise_point_cloud()
         self._initialise_active_data_point()
         self._initialise_scene()
@@ -127,7 +127,7 @@ class ScaffoldFitterModel(object):
     def auto_align_model_on_data(self):
         self._model_coordinate_field = self._ScaffoldFitter.autoCentreModelOnData()
         # self._ScaffoldFitter.initializeRigidAlignment()
-        self._set_model_graphics_post_align()
+        # self._set_model_graphics_post_align()
 
     def rigid_align(self):
         _ = self._ScaffoldFitter.initializeRigidAlignment()
@@ -226,35 +226,27 @@ class ScaffoldFitterModel(object):
         self._tessellationmodule = self._tessellationmodule.getDefaultTessellation()
         self._tessellationmodule.setRefinementFactors([res])
 
-    def _initialise_reference_model_coordinate(self):
-        self._model_reference_coordinate_field = self._ScaffoldFitter.getModelCoordinateField(reference=True)
-        name = self._model_reference_coordinate_field.getName()
-        number = 0
-        number_string = ''
-        # while True:
-        #     result = self._model_reference_coordinate_field.setName('reference_' + name + number_string)
-        #     result = self._model_reference_coordinate_field.setName('coordinates')
-        #     if result == ZINC_OK:
-        #         break
-        #     number = number + 1
-        #     number_string = str(number)
-
     def _initialise_scaffold_model(self, reference=True):
         if reference:
             result = self._region.readFile(self._scaffold_model)
             if result != ZINC_OK:
-                raise ValueError('Failed to initiate scaffold')
-            if self._model_reference_coordinate_field is not None:
-                self._model_reference_coordinate_field = None
-                self._initialise_reference_model_coordinate()
-            else:
-                self._initialise_reference_model_coordinate()
+                raise ValueError('Failed to initiate reference scaffold')
+            self._model_reference_coordinate_field = self._ScaffoldFitter.getModelCoordinateField()
+            name = self._model_reference_coordinate_field.getName()
+            number = 0
+            number_string = ''
+            while True:
+                result = self._model_reference_coordinate_field.setName('reference_' + name + number_string)
+                if result == ZINC_OK:
+                    break
+                number = number + 1
+            self._ScaffoldFitter.setRefereceModelCoordinates(self._model_reference_coordinate_field)
         else:
-            if self._model_coordinate_field is not None:
-                self._model_coordinate_field = None
-                self._model_coordinate_field = self._ScaffoldFitter.getModelCoordinateField(reference=reference)
-            else:
-                self._model_coordinate_field = self._ScaffoldFitter.getModelCoordinateField(reference=reference)
+            result = self._region.readFile(self._scaffold_model)
+            if result != ZINC_OK:
+                raise ValueError('Failed to initiate model scaffold')
+            self._model_coordinate_field = self._ScaffoldFitter.getModelCoordinateField()
+            self._ScaffoldFitter.setModelCoordinates(self._model_coordinate_field)
 
     def _initialise_point_cloud(self):
         sir = self._region.createStreaminformationRegion()
@@ -264,6 +256,7 @@ class ScaffoldFitterModel(object):
         if result != ZINC_OK:
             raise ValueError('Failed to read point cloud')
         self._data_coordinate_field = self._ScaffoldFitter.getDataCoordinateField()
+        self._ScaffoldFitter.setDataCoordinates(self._data_coordinate_field)
 
     def _initialise_active_data_point(self):
         fm = self._region.getFieldmodule()
@@ -321,6 +314,7 @@ class ScaffoldFitterModel(object):
 
     def fit_data(self):
         self._ScaffoldFitter.fit()
+        self._set_model_graphics_post_align()
 
     def perturb_lines(self):
         if self._region is None:
