@@ -42,6 +42,7 @@ class ScaffoldFitterModel(object):
             'display_node_derivatives': False,
             'display_node_derivative_labels': self._node_derivative_labels[0:3],
             'display_lines': True,
+            'display_lines_post_fit': True,
             'display_lines_exterior': False,
             'display_surfaces': True,
             'display_surfaces_exterior': True,
@@ -80,6 +81,7 @@ class ScaffoldFitterModel(object):
 
     def get_initial_scale(self):
         self._ScaffoldFitter.getInitialScale()
+        # self._ScaffoldFitter.getInitialDataScale()
 
     def get_align_offset(self):
         return self._ScaffoldFitter.getAlignOffset()
@@ -138,9 +140,18 @@ class ScaffoldFitterModel(object):
         fieldmodule = self._context.getMaterialmodule()
         lines.setCoordinateField(self._model_reference_coordinate_field)
         lines.setName('display_lines')
-        black = fieldmodule.findMaterialByName('heart_lines')
+        black = fieldmodule.findMaterialByName('white')
         lines.setMaterial(black)
         return lines
+
+    def _create_line_graphics_post_fit(self):
+        lines_post_fit = self._region.getScene().createGraphicsLines()
+        fieldmodule = self._context.getMaterialmodule()
+        lines_post_fit.setCoordinateField(self._model_coordinate_field)
+        lines_post_fit.setName('display_lines_post_fit')
+        black = fieldmodule.findMaterialByName('orange')
+        lines_post_fit.setMaterial(black)
+        return lines_post_fit
 
     def _create_surface_graphics(self):
         surface = self._scene.createGraphicsSurfaces()
@@ -150,6 +161,15 @@ class ScaffoldFitterModel(object):
         surface.setMaterial(surface_material)
         surface.setName('display_surfaces')
         return surface
+
+    def _create_surface_graphics_post_fit(self):
+        surface_post_fit = self._scene.createGraphicsSurfaces()
+        surface_post_fit.setCoordinateField(self._model_coordinate_field)
+        surface_post_fit.setRenderPolygonMode(Graphics.RENDER_POLYGON_MODE_SHADED)
+        surface_material_post_fit = self._materialmodule.findMaterialByName('heart_tissue_trans_postfit')
+        surface_post_fit.setMaterial(surface_material_post_fit)
+        surface_post_fit.setName('display_surfaces_post_fit')
+        return surface_post_fit
 
     def _create_surface_trans_graphics(self):
         surface_trans = self._scene.createGraphicsSurfaces()
@@ -213,8 +233,13 @@ class ScaffoldFitterModel(object):
         solid_tissue_trnaslucent.setAttributeReal3(Material.ATTRIBUTE_AMBIENT, [0.913, 0.541, 0.33])
         solid_tissue_trnaslucent.setAttributeReal3(Material.ATTRIBUTE_EMISSION, [0.0, 0.0, 0.0])
         solid_tissue_trnaslucent.setAttributeReal3(Material.ATTRIBUTE_SPECULAR, [0.2, 0.2, 0.3])
-        solid_tissue_trnaslucent.setAttributeReal(Material.ATTRIBUTE_ALPHA, 0.5)
+        solid_tissue_trnaslucent.setAttributeReal(Material.ATTRIBUTE_ALPHA, 0.4)
         solid_tissue_trnaslucent.setAttributeReal(Material.ATTRIBUTE_SHININESS, 0.6)
+
+        solid_tissue_trnaslucent_post_fit = self._materialmodule.findMaterialByName('trans_blue')
+        solid_tissue_trnaslucent_post_fit.setName('heart_tissue_trans_postfit')
+        solid_tissue_trnaslucent_post_fit.setManaged(True)
+
         self._materialmodule.endChange()
 
     def _initialise_glyph_material(self):
@@ -228,7 +253,11 @@ class ScaffoldFitterModel(object):
 
     def _initialise_scaffold_model(self, reference=True):
         if reference:
+            # exnodeFile = self._scaffold_model + '.exnode'
+            # exelemFile = self._scaffold_model + '.exelem'
             result = self._region.readFile(self._scaffold_model)
+            # result = self._region.readFile(exnodeFile)
+            # result = self._region.readFile(exelemFile)
             if result != ZINC_OK:
                 raise ValueError('Failed to initiate reference scaffold')
             self._model_reference_coordinate_field = self._ScaffoldFitter.getModelCoordinateField()
@@ -242,7 +271,11 @@ class ScaffoldFitterModel(object):
                 number = number + 1
             self._ScaffoldFitter.setRefereceModelCoordinates(self._model_reference_coordinate_field)
         else:
+            # exnodeFile = self._scaffold_model + '.exnode'
+            # exelemFile = self._scaffold_model + '.exelem'
             result = self._region.readFile(self._scaffold_model)
+            # result = self._region.readFile(exnodeFile)
+            # result = self._region.readFile(exelemFile)
             if result != ZINC_OK:
                 raise ValueError('Failed to initiate model scaffold')
             self._model_coordinate_field = self._ScaffoldFitter.getModelCoordinateField()
@@ -294,9 +327,15 @@ class ScaffoldFitterModel(object):
 
     def _set_model_graphics_post_align(self):
         self._scene.beginChange()
-        for name in ['display_lines', 'display_surfaces']:
+        for name in ['display_lines_post_fit', 'display_surfaces_post_fit']:
             graphics = self._scene.findGraphicsByName(name)
             graphics.setCoordinateField(self._model_coordinate_field)
+        self._scene.endChange()
+
+    def _show_post_fit_graphics(self):
+        self._scene.beginChange()
+        self._create_surface_graphics_post_fit()
+        self._create_line_graphics_post_fit()
         self._scene.endChange()
 
     def _set_explicit_model_graphics(self, field):
@@ -314,7 +353,7 @@ class ScaffoldFitterModel(object):
 
     def fit_data(self):
         self._ScaffoldFitter.fit()
-        self._set_model_graphics_post_align()
+        self._show_post_fit_graphics()
 
     def perturb_lines(self):
         if self._region is None:
