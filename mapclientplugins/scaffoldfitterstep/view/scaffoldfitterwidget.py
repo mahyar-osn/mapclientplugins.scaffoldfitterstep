@@ -18,7 +18,7 @@ class ScaffoldFitterWidget(QtGui.QWidget):
         self._model = model
 
         self._ui = Ui_ScaffoldfitterWidget()
-        self._ui.setupUi(self._get_shareable_open_gl_widget(), self)
+        self._ui.setupUi(self, self._get_shareable_open_gl_widget())
         self._setup_handlers()
 
         self._scaffold_path = scaffold_path
@@ -42,6 +42,7 @@ class ScaffoldFitterWidget(QtGui.QWidget):
         self._model.get_initial_scale()
 
         self._ui.sceneviewerWidget.set_context(model.get_context())
+        self._ui.overlaySceneviewerWidget.set_context(model.get_context())
         # self._ui.sceneviewerWidget.set_generator_model(self._generator_model)
 
         # self._refresh_scaffold_type_names()
@@ -52,6 +53,7 @@ class ScaffoldFitterWidget(QtGui.QWidget):
     def _make_connections(self):
         # general connections
         self._ui.sceneviewerWidget.graphics_initialized.connect(self._graphics_initialized)
+        self._ui.overlaySceneviewerWidget.graphics_initialized.connect(self._graphics_initialized)
         self._ui.doneButton.clicked.connect(self._done_clicked)
         self._ui.viewAllButton.clicked.connect(self._view_all)
 
@@ -100,7 +102,7 @@ class ScaffoldFitterWidget(QtGui.QWidget):
     def _initialise(self):
         self._model.initialise(self._point_cloud, self._scaffold_path)
         self._setup_ui()
-        self._graphics_initialized()
+        # self._graphics_initialized()
 
     def _setup_ui(self):
         self._ui.toolBox.setCurrentIndex(0)
@@ -128,12 +130,19 @@ class ScaffoldFitterWidget(QtGui.QWidget):
         return self._settings
 
     def _graphics_initialized(self):
-        scene_viewer = self._ui.sceneviewerWidget.get_zinc_sceneviewer()
+        sender = self.sender()
+        print('sender', sender)
+        if sender is None:
+            return
+
+        if sender == self._ui.sceneviewerWidget:
+            self._refresh_options()
+
+        scene_viewer = sender.get_zinc_sceneviewer()
         if scene_viewer is not None:
             scene = self._model.get_scene()
-            self._refresh_options()
             # self._ui.sceneviewerWidget.set_tumble_rate(0)  # For 2D viewing only i.e. no rotation.
-            self._ui.sceneviewerWidget.set_scene(scene)
+            sender.set_scene(scene)
             if len(self._settings['view-parameters']) == 0:
                 self._view_all()
             else:
@@ -141,12 +150,14 @@ class ScaffoldFitterWidget(QtGui.QWidget):
                 look_at = self._settings['view-parameters']['look_at']
                 up = self._settings['view-parameters']['up']
                 angle = self._settings['view-parameters']['angle']
-                self._ui.sceneviewerWidget.set_view_parameters(eye, look_at, up, angle)
+                sender.set_view_parameters(eye, look_at, up, angle)
                 self._view_all()
 
     def _setup_handlers(self):
         basic_handler = SceneManipulation()
         self._ui.sceneviewerWidget.register_handler(basic_handler)
+        basic_handler_overlay = SceneManipulation()
+        self._ui.overlaySceneviewerWidget.register_handler(basic_handler_overlay)
 
     def _swap_yz_clicked(self):
         if not self._yz:
@@ -163,6 +174,7 @@ class ScaffoldFitterWidget(QtGui.QWidget):
         context = self._model.get_context()
         self._shareable_widget = BaseSceneviewerWidget()
         self._shareable_widget.set_context(context)
+        return self._shareable_widget
 
     def _align_settings_display(self):
         self._display_vector(self._ui.alignScaleLineEdit, self._model.get_align_scale())
@@ -334,6 +346,8 @@ class ScaffoldFitterWidget(QtGui.QWidget):
     def _view_all(self):
         if self._ui.sceneviewerWidget.get_zinc_sceneviewer() is not None:
             self._ui.sceneviewerWidget.view_all()
+        if self._ui.overlaySceneviewerWidget.get_zinc_sceneviewer() is not None:
+            self._ui.overlaySceneviewerWidget.view_all()
 
     def _project_clicked(self):
         self._model.project_data()
