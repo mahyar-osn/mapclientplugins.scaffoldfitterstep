@@ -1,5 +1,5 @@
 from PySide import QtGui, QtCore
-
+from opencmiss.zinc.field import Field
 from functools import partial
 
 from .ui_scaffoldfitterwidget import Ui_ScaffoldfitterWidget
@@ -10,22 +10,35 @@ from opencmiss.zincwidgets.basesceneviewerwidget import BaseSceneviewerWidget
 # from scaffoldmaker.scaffoldpackage import ScaffoldPackage
 
 
+def _read_model_description(region, description):
+    stream_information = region.createStreaminformationRegion()
+    memory_resource = stream_information.createStreamresourceMemoryBuffer(description['elements3D'])
+    stream_information.setResourceDomainTypes(memory_resource, Field.DOMAIN_TYPE_MESH3D)
+    memory_resource = stream_information.createStreamresourceMemoryBuffer(description['elements2D'])
+    stream_information.setResourceDomainTypes(memory_resource, Field.DOMAIN_TYPE_MESH2D)
+    memory_resource = stream_information.createStreamresourceMemoryBuffer(description['elements1D'])
+    stream_information.setResourceDomainTypes(memory_resource, Field.DOMAIN_TYPE_MESH1D)
+    memory_resource = stream_information.createStreamresourceMemoryBuffer(description['nodes'])
+    stream_information.setResourceDomainTypes(memory_resource, Field.DOMAIN_TYPE_NODES)
+    return stream_information
+
+
 class ScaffoldFitterWidget(QtGui.QWidget):
 
-    def __init__(self, model, scaffold_path, scaffold_name, scaffold_species, scaffold_params, scaffold_object,
-                 point_cloud, parent=None):
+    def __init__(self, model, scaffold_description_model, point_cloud, parent=None):
         super(ScaffoldFitterWidget, self).__init__(parent)
         self._model = model
-
+        self._region = self._model.get_region()
         self._ui = Ui_ScaffoldfitterWidget()
         self._ui.setupUi(self, self._get_shareable_open_gl_widget())
         self._setup_handlers()
 
-        self._scaffold_path = scaffold_path
-        self._scaffold_name = scaffold_name
-        self._scaffold_species = scaffold_species
-        self._scaffold_params = scaffold_params
-        self._scaffold_object = scaffold_object
+        self._scaffold_description_model = scaffold_description_model
+        self._scaffold_description = self._scaffold_description_model.get_scaffold_description()
+        self._scaffold_stream_information = _read_model_description(self._region, self._scaffold_description)
+        self._scaffold_name = self._scaffold_description_model.get_model_name()
+        self._scaffold_species = self._scaffold_description_model.get_model_species()
+        self._scaffold_params = self._scaffold_description_model.get_parameters()
 
         self._point_cloud = point_cloud
 
@@ -100,7 +113,7 @@ class ScaffoldFitterWidget(QtGui.QWidget):
         self._model.initialise_region(self._scaffold_model_parent_region)
 
     def _initialise(self):
-        self._model.initialise(self._point_cloud, self._scaffold_path)
+        self._model.initialise(self._point_cloud, self._scaffold_stream_information)
         self._setup_ui()
         # self._graphics_initialized()
 
@@ -131,7 +144,6 @@ class ScaffoldFitterWidget(QtGui.QWidget):
 
     def _graphics_initialized(self):
         sender = self.sender()
-        print('sender', sender)
         if sender is None:
             return
 
