@@ -2,7 +2,6 @@ from opencmiss.zinc.field import Field
 from opencmiss.zinc.glyph import Glyph
 from opencmiss.zinc.graphics import Graphics
 from opencmiss.zinc.material import Material
-
 from opencmiss.zinc.status import OK as ZINC_OK
 
 from scaffoldfitter.fitter import Fitter
@@ -80,8 +79,8 @@ class ScaffoldFitterModel(object):
         return self._ScaffoldFitter.getAlignScale()
 
     def get_initial_scale(self):
+        self._ScaffoldFitter.getInitialDataScale()
         self._ScaffoldFitter.getInitialScale()
-        # self._ScaffoldFitter.getInitialDataScale()
 
     def get_align_offset(self):
         return self._ScaffoldFitter.getAlignOffset()
@@ -92,10 +91,10 @@ class ScaffoldFitterModel(object):
     def _get_visibility(self, graphics_name):
         return self._settings[graphics_name]
 
-    def initialise(self, point_cloud, scaffold_path):
+    def initialise(self, point_cloud, scaffold_sir):
         self._reset_align_settings()
         self._load_point_cloud(point_cloud)
-        self._load_scaffold(scaffold_path)
+        self._load_scaffold(scaffold_sir)
         self.initialise_problem()
 
     def _load_scaffold(self, scaffold):
@@ -157,7 +156,7 @@ class ScaffoldFitterModel(object):
         surface = self._scene.createGraphicsSurfaces()
         surface.setCoordinateField(self._model_reference_coordinate_field)
         surface.setRenderPolygonMode(Graphics.RENDER_POLYGON_MODE_SHADED)
-        surface_material = self._materialmodule.findMaterialByName('heart_tissue')
+        surface_material = self._materialmodule.findMaterialByName('trans_blue')
         surface.setMaterial(surface_material)
         surface.setName('display_surfaces')
         return surface
@@ -191,11 +190,12 @@ class ScaffoldFitterModel(object):
         points.setMaterial(self._materialmodule.findMaterialByName('silver'))
 
     def _create_axis_graphics(self):
-        axes_scale = 10000
+        axes_scale = [10]*3
         axes = self._scene.createGraphicsPoints()
         pointattr = axes.getGraphicspointattributes()
         pointattr.setGlyphShapeType(Glyph.SHAPE_TYPE_AXES_XYZ)
-        pointattr.setBaseSize([axes_scale, axes_scale, axes_scale])
+        # pointattr.setBaseSize([axes_scale, axes_scale, axes_scale])
+        pointattr.setBaseSize(axes_scale)
         axes.setMaterial(self._materialmodule.findMaterialByName('red'))
         axes.setName('display_axes')
         axes.setVisibilityFlag(self.is_display_axes())
@@ -227,19 +227,18 @@ class ScaffoldFitterModel(object):
         solid_tissue.setAttributeReal(Material.ATTRIBUTE_ALPHA, 1.0)
         solid_tissue.setAttributeReal(Material.ATTRIBUTE_SHININESS, 0.6)
 
-        solid_tissue_trnaslucent = self._materialmodule.createMaterial()
-        solid_tissue_trnaslucent.setName('heart_tissue_trans')
-        solid_tissue_trnaslucent.setManaged(True)
-        solid_tissue_trnaslucent.setAttributeReal3(Material.ATTRIBUTE_AMBIENT, [0.913, 0.541, 0.33])
-        solid_tissue_trnaslucent.setAttributeReal3(Material.ATTRIBUTE_EMISSION, [0.0, 0.0, 0.0])
-        solid_tissue_trnaslucent.setAttributeReal3(Material.ATTRIBUTE_SPECULAR, [0.2, 0.2, 0.3])
-        solid_tissue_trnaslucent.setAttributeReal(Material.ATTRIBUTE_ALPHA, 0.4)
-        solid_tissue_trnaslucent.setAttributeReal(Material.ATTRIBUTE_SHININESS, 0.6)
+        trans_blue = self._material_module.createMaterial()
 
-        solid_tissue_trnaslucent_post_fit = self._materialmodule.findMaterialByName('trans_blue')
-        solid_tissue_trnaslucent_post_fit.setName('heart_tissue_trans_postfit')
-        solid_tissue_trnaslucent_post_fit.setManaged(True)
-
+        trans_blue.setName('trans_blue')
+        trans_blue.setManaged(True)
+        trans_blue.setAttributeReal3(Material.ATTRIBUTE_AMBIENT, [0.0, 0.2, 0.6])
+        trans_blue.setAttributeReal3(Material.ATTRIBUTE_DIFFUSE, [0.0, 0.7, 1.0])
+        trans_blue.setAttributeReal3(Material.ATTRIBUTE_EMISSION, [0.0, 0.0, 0.0])
+        trans_blue.setAttributeReal3(Material.ATTRIBUTE_SPECULAR, [0.1, 0.1, 0.1])
+        trans_blue.setAttributeReal(Material.ATTRIBUTE_ALPHA, 0.3)
+        trans_blue.setAttributeReal(Material.ATTRIBUTE_SHININESS, 0.2)
+        glyph_module = self._context.getGlyphmodule()
+        glyph_module.defineStandardGlyphs()
         self._materialmodule.endChange()
 
     def _initialise_glyph_material(self):
@@ -252,12 +251,14 @@ class ScaffoldFitterModel(object):
         self._tessellationmodule.setRefinementFactors([res])
 
     def _initialise_scaffold_model(self, reference=True):
+        filename = 'D:\\sparc\\fitting\\Shwaber\\model.exf'
+
         if reference:
-            # exnodeFile = self._scaffold_model + '.exnode'
-            # exelemFile = self._scaffold_model + '.exelem'
-            result = self._region.readFile(self._scaffold_model)
+            # exnodeFile = filename + '.exnode'
+            # exelemFile = filename + '.exelem'
             # result = self._region.readFile(exnodeFile)
-            # result = self._region.readFile(exelemFile)
+            result = self._region.readFile(filename)
+            # result = self._region.read(self._scaffold_model)
             if result != ZINC_OK:
                 raise ValueError('Failed to initiate reference scaffold')
             self._model_reference_coordinate_field = self._ScaffoldFitter.getModelCoordinateField()
@@ -271,19 +272,21 @@ class ScaffoldFitterModel(object):
                 number = number + 1
             self._ScaffoldFitter.setRefereceModelCoordinates(self._model_reference_coordinate_field)
         else:
-            # exnodeFile = self._scaffold_model + '.exnode'
-            # exelemFile = self._scaffold_model + '.exelem'
-            result = self._region.readFile(self._scaffold_model)
+            # exnodeFile = filename+ '.exnode'
+            # exelemFile = filename + '.exelem'
             # result = self._region.readFile(exnodeFile)
-            # result = self._region.readFile(exelemFile)
+            result = self._region.readFile(filename)
+            # result = self._region.read(self._scaffold_model)
             if result != ZINC_OK:
                 raise ValueError('Failed to initiate model scaffold')
             self._model_coordinate_field = self._ScaffoldFitter.getModelCoordinateField()
             self._ScaffoldFitter.setModelCoordinates(self._model_coordinate_field)
 
     def _initialise_point_cloud(self):
+        filename = 'D:\\sparc\\fitting\\Shwaber\\data.exdata'
         sir = self._region.createStreaminformationRegion()
-        point_cloud_resource = sir.createStreamresourceFile(self._point_cloud)
+        # point_cloud_resource = sir.createStreamresourceFile(self._point_cloud)
+        point_cloud_resource = sir.createStreamresourceFile(filename)
         sir.setResourceDomainTypes(point_cloud_resource, Field.DOMAIN_TYPE_DATAPOINTS)
         result = self._region.read(sir)
         if result != ZINC_OK:
@@ -322,7 +325,7 @@ class ScaffoldFitterModel(object):
         self._create_line_graphics()
         self._create_surface_graphics()
         self._create_surface_trans_graphics()
-        self._create_axis_graphics()
+        # self._create_axis_graphics()
         self._scene.endChange()
 
     def _set_model_graphics_post_align(self):
